@@ -5,6 +5,7 @@ import connectDB from "./src/config/db.js";
 import authRoutes from "./src/routes/authRoutes.js";
 import jobRoutes from "./src/routes/jobRoutes.js";
 import adminRoutes from "./src/routes/adminRoutes.js";
+import userRoutes from "./src/routes/userRoutes.js";
 
 dotenv.config();
 
@@ -22,7 +23,7 @@ app.use("/uploads", express.static("src/uploads"));
 app.use("/api/auth", authRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/admin", adminRoutes);
-
+app.use("/api/users", userRoutes);
 // ✅ Default test route (to confirm API is running)
 app.get("/", (req, res) => {
   res.status(200).json({
