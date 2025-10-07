@@ -8,5 +8,7 @@ router.post("/", protect, authorizeRoles("employer", "admin"), createJob);
 router.get("/", protect,getAllJobs);
 router.put("/:id", protect, updateJob);
 router.delete("/:id", protect, deleteJob);
+router.get("/job", getAllJobs);
+
 
 export default router;
