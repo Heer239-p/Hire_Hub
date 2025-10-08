@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 
 // Import your models
 import User from "./src/models/User.js";
+import Company from "./src/models/companies.js";
 import Job from "./src/models/Job.js";
 import Application from "./src/models/Application.js";
 import Plan from "./src/models/Plan.js";
@@ -43,6 +44,42 @@ mongoose.connection.once("open", async () => {
     );
 
     console.log("User collection synced ✅");
+    
+    // =========================
+    // COMPANY COLLECTION
+    // =========================
+    await Company.updateMany(
+      { name: { $exists: false } },
+      { $set: { name: "Unknown Company" } }
+    );
+
+    await Company.updateMany(
+      { description: { $exists: false } },
+      { $set: { description: "" } }
+    );
+
+    await Company.updateMany(
+      { website: { $exists: false } },
+      { $set: { website: null } }
+    );
+
+    await Company.updateMany(
+      { location: { $exists: false } },
+      { $set: { location: "Not Specified" } }
+    );
+
+    await Company.updateMany(
+      { industry: { $exists: false } },
+      { $set: { industry: "General" } }
+    );
+
+    await Company.updateMany(
+      { logo: { $exists: false } },
+      { $set: { logo: null } }
+    );
+
+    console.log("Company collection synced ✅");
+
 
     // =========================
     // JOB COLLECTION

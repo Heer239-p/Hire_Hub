@@ -2,10 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./src/config/db.js";
-import authRoutes from "./src/routes/authRoutes.js";
-import jobRoutes from "./src/routes/jobRoutes.js";
-import adminRoutes from "./src/routes/adminRoutes.js";
-import userRoutes from "./src/routes/userRoutes.js";
+import routes from "./src/routes/index.js"; // ✅ Import consolidated routes
 
 dotenv.config();
 
@@ -19,12 +16,10 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("src/uploads"));
 
-// Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/jobs", jobRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/user", userRoutes);
-// ✅ Default test route (to confirm API is running)
+// Use consolidated routes
+app.use("/api", routes);
+
+// ✅ Default test route
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,

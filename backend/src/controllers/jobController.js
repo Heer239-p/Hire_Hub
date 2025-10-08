@@ -172,3 +172,36 @@ export const deleteJob = async (req, res) => {
     });
   }
 };
+
+
+// ==========================
+// GET MY JOBS (for logged-in employer)
+// ==========================
+export const getMyJobs = async (req, res) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Fetch only jobs created by the logged-in user
+    const jobs = await Job.find({ employer: req.user._id })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate("employer", "firstName lastName email role");
+
+    const totalJobs = await Job.countDocuments({ employer: req.user._id });
+
+    return successResponse(res, 200, "Your jobs fetched successfully ✅", {
+      jobs,
+      totalJobs,
+      currentPage: page,
+      totalPages: Math.ceil(totalJobs / limit),
+    });
+  } catch (error) {
+    console.error("Error fetching my jobs:", error);
+    return errorResponse(res, 500, "Server error while fetching your jobs ⚠️", {
+      details: error.message,
+    });
+  }
+};

@@ -6,6 +6,6 @@ const router = express.Router();
 
 // PUT /api/users/profile
 router.put("/profile", protect, upload.single("profileImage"),updateUserProfile);
-router.post("/:id/apply",protect, authorizeRoles("user"), applyJob);
+router.post("/:id/apply", protect, authorizeRoles("user"), upload.single("resume"), applyJob);
 
 export default router;

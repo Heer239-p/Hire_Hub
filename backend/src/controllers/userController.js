@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import Job from "../models/Job.js";
+import Application from "../models/Application.js";
 import bcrypt from "bcryptjs";
 import { successResponse, errorResponse } from "../utils/responseHandler.js";
 
@@ -67,6 +68,9 @@ export const updateUserProfile = async (req, res) => {
 };
 
 
+
+
+
 // ====================================================
 // APPLY TO A JOB (Job Seekers only)
 // ====================================================
@@ -74,36 +78,57 @@ export const applyJob = async (req, res) => {
   try {
     const jobId = req.params.id;
     const userId = req.user._id;
+    const { coverLetter } = req.body;
+    const resumeFile = req.file ? req.file.filename : null; // uploaded resume (PDF, DOCX)
 
+    // Validate resume
+    if (!resumeFile) {
+      return errorResponse(res, 400, "Resume file is required ❌");
+    }
+
+    // Check job exists
     const job = await Job.findById(jobId);
     if (!job) return errorResponse(res, 404, "Job not found ❌");
 
-    // Prevent employers from applying to their own job
+    // Check if employer applying to own job
     if (job.employer.toString() === userId.toString()) {
       return errorResponse(res, 400, "You cannot apply to your own job ❌");
     }
 
-    // Prevent duplicate applications
-    if (job.applicants.includes(userId)) {
-      return errorResponse(res, 400, "You have already applied to this job ✅");
-    }
-
-    // Ensure only users (job seekers) can apply
+    // Ensure only job seekers can apply
     const user = await User.findById(userId);
     if (user.role !== "user") {
       return errorResponse(res, 403, "Only job seekers can apply for jobs ❌");
     }
 
-    // Add applicant
+    // Prevent duplicate application
+    const alreadyApplied = await Application.findOne({ job: jobId, applicant: userId });
+    if (alreadyApplied) {
+      return errorResponse(res, 400, "You have already applied to this job ✅");
+    }
+
+    // Create new application
+    const application = await Application.create({
+      job: jobId,
+      applicant: userId,
+      resume: resumeFile,
+      coverLetter: coverLetter || "",
+      status: "Applied",
+    });
+
+    // Also push applicant to job (optional, for quick lookup)
     job.applicants.push(userId);
     await job.save();
 
-    return successResponse(res, 200, "Applied to job successfully ✅", {
-      jobId: job._id,
-      applicants: job.applicants,
+    return successResponse(res, 201, "Job applied successfully ✅", {
+      applicationId: application._id,
+      job: jobId,
+      applicant: userId,
+      resume: resumeFile,
+      coverLetter: coverLetter || "",
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error applying to job:", error);
     return errorResponse(res, 500, "Server error while applying to job ⚠️", {
       details: error.message,
     });
