@@ -2,7 +2,7 @@
 import React from "react";
 import Layout from "./components/Layout";
 import Home from "./jobseekers/pages/Home";
-import "./index";
+import "./index.js";
 const App = () => {
   // Default landing page content
   return (
