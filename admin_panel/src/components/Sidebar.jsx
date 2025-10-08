@@ -108,25 +108,30 @@ const Sidebar = ({ collapsed }) => {
 
   return (
     <div
-      className={`${
-        collapsed ? 'w-16' : 'w-64'
-      } h-screen flex flex-col justify-between bg-gray-200 text-gray-700 transition-all duration-300`}
+      className={`${collapsed ? 'w-16' : 'w-64'
+        } h-screen flex flex-col justify-between bg-black-900 text-gray-700 transition-all duration-300`}
     >
       {/* Top - Logo and Nav */}
       <div>
-        <div className="h-16 flex items-center justify-center">
+        <div className="h-16 w-full flex items-center relative px-2">
+          {/* Logo on the left corner */}
           <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1T7QK6Tm3aWgDCBGJdcaCPTmMkpx9ClSSGA&s"
+            src='https://xpertlab.com/wp-content/uploads/2023/05/Hire-Hub.jpg'
             alt="logo"
-            className="w-8 h-8 rounded-full"
+            className="w-8 h-8 rounded-full absolute left-2"
           />
-          {!collapsed && (
-            <h1 className="text-2xl font-bold tracking-wide ml-2">
+
+          {/* Centered title */}
+          {!collapsed ? (
+            <h1 className="text-2xl text-white font-bold tracking-wide mx-auto">
               Hire<span className="text-blue-500">Hub</span>
             </h1>
+          ) : (
+            <span className="text-2xl text-white font-bold mx-auto">H</span>
           )}
-          {collapsed && <span className="text-2xl font-bold ml-1">H</span>}
         </div>
+
+
 
         <nav className="flex flex-col gap-2 p-4">
           {navItems.map(({ label, path, icon: Icon }) => {
@@ -135,11 +140,10 @@ const Sidebar = ({ collapsed }) => {
               <Link
                 key={path}
                 to={path}
-                className={`flex items-center gap-4 p-2 rounded-md transition-all ${
-                  isActive
+                className={`flex items-center gap-4 p-2 rounded-md transition-all text-white ${isActive
                     ? 'bg-blue-600 text-white'
                     : 'hover:bg-blue-600 hover:text-white'
-                }`}
+                  }`}
               >
                 <Icon className="text-xl" />
                 {!collapsed && <span className="text-sm">{label}</span>}
@@ -152,7 +156,7 @@ const Sidebar = ({ collapsed }) => {
       {/* Bottom - Logout */}
       <div className="p-4">
         <button
-          className="flex items-center gap-4 w-full p-2 rounded-md hover:bg-red-600 hover:text-white transition-colors"
+          className="flex items-center gap-4 w-full p-2 rounded-md hover:bg-red-600 hover:text-white transition-colors text-white"
           onClick={handleLogout}
         >
           <FiLogOut className="text-xl" />

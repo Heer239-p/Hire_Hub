@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from "react";
-import {
-  FiMenu,
-  FiBell,
-  FiChevronDown,
-  FiSearch,
-} from "react-icons/fi";
+import { useState, useEffect } from "react";
+import { FiMenu, FiSun, FiMoon, FiBell } from "react-icons/fi";
+import { useNavigate } from "react-router-dom"; 
 import adminDP from "../assets/images/admin_dp.png";
-
-const Header = ({ onToggleSidebar, onLogout }) => {
+import profile from "../pages/profile";
+const Header = ({ onToggleSidebar }) => {
+  const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
       const savedTheme = localStorage.getItem("theme");
@@ -17,9 +14,8 @@ const Header = ({ onToggleSidebar, onLogout }) => {
     return false;
   });
 
+  // Notifications logic
   const [showNotifications, setShowNotifications] = useState(false);
-
-  // 💌 Sample notifications
   const [notifications, setNotifications] = useState([
     { id: 1, message: "New user registered", time: "5 min ago" },
     { id: 2, message: "Job post 'UI Designer' approved", time: "20 min ago" },
@@ -37,30 +33,24 @@ const Header = ({ onToggleSidebar, onLogout }) => {
   }, [darkMode]);
 
   return (
-    <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between relative">
-      {/* Left side */}
-      <div className="flex items-center gap-4 w-full">
-        <button
-          onClick={onToggleSidebar}
-          className="text-2xl text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-        >
-          <FiMenu />
-        </button>
+    <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between">
+      {/* Left: menu toggle */}
+      <button
+        onClick={onToggleSidebar}
+        className="text-2xl text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+      >
+        <FiMenu />
+      </button>
 
-        {/* Search bar */}
-        <div className="relative w-full max-w-sm">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-700 rounded-full text-sm focus:outline-none bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
-          />
-          <FiSearch className="absolute left-3 top-2.5 text-gray-400 dark:text-gray-500 text-lg" />
-        </div>
+        {/* Center: Welcome Text */}
+      <div className="absolute left-1/2 transform -translate-x-1/2 text-lg font-semibold text-gray-700 dark:text-gray-200">
+        Welcome Admin 
       </div>
 
-      {/* Right side controls */}
-      <div className="flex items-center gap-6 relative">
-        {/* 🔔 Notification Icon */}
+
+      {/* Right: notifications, dark mode & profile */}
+      <div className="flex items-center gap-4 relative">
+        {/* Notifications */}
         <div className="relative">
           <button
             onClick={() => setShowNotifications(!showNotifications)}
@@ -74,7 +64,6 @@ const Header = ({ onToggleSidebar, onLogout }) => {
             <FiBell className="text-xl text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" />
           </button>
 
-          {/* Notification dropdown */}
           {showNotifications && (
             <div className="absolute right-0 mt-3 w-72 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-3 z-50">
               <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
@@ -103,22 +92,25 @@ const Header = ({ onToggleSidebar, onLogout }) => {
           )}
         </div>
 
-        {/* Profile section */}
-        <div className="flex items-center gap-2 cursor-pointer">
-          <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">
-            Hiral
-          </span>
-          <FiChevronDown className="text-gray-600 dark:text-gray-300" />
-          <img
-            src={adminDP}
-            alt="Admin Profile"
-            className="w-10 h-10 rounded-full object-cover"
-          />
-        </div>
+        {/* Dark/Light Mode Toggle */}
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className="text-gray-600 dark:text-gray-300 text-xl hover:text-blue-600 dark:hover:text-blue-400"
+        >
+          {darkMode ? <FiSun /> : <FiMoon />}
+        </button>
+
+        {/* Admin Profile Image */}
+        <img
+  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZF9y9Tee8pOYRIavNbJ3Zmsd1v0_Lz1uIvA&s"
+  alt="Admin Profile"
+  onClick={() => navigate("/profile")}
+  className="w-10 h-10 rounded-full object-cover cursor-pointer transition-transform duration-200 hover:scale-105"
+/>
+
       </div>
     </header>
   );
 };
 
 export default Header;
-  
