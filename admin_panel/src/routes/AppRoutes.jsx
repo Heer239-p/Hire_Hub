@@ -1,0 +1,75 @@
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+
+import Dashboard from '../pages/Dashboard';
+import Jobs from '../pages/Jobs';
+import Users from '../pages/Users';
+import Applications from '../pages/Applications';
+import Login from '../pages/Login';
+import PrivateRoute from '../components/PrivateRoute';
+import AdminLayout from '../layouts/AdminLayout';  // <-- import layout here
+import { isAuthenticated } from '../utils/auth';
+
+const AppRoutes = () => {
+  return (
+    <Routes>
+      {/* Public route */}
+      <Route path="/login" element={<Login />} />
+
+      {/* Private routes wrapped inside AdminLayout */}
+      <Route
+        path="/"
+        element={
+          <PrivateRoute>
+            <AdminLayout>
+              <Dashboard />
+            </AdminLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/jobs"
+        element={
+          <PrivateRoute>
+            <AdminLayout>
+              <Jobs />
+            </AdminLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/users"
+        element={
+          <PrivateRoute>
+            <AdminLayout>
+              <Users />
+            </AdminLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/applications"
+        element={
+          <PrivateRoute>
+            <AdminLayout>
+              <Applications />
+            </AdminLayout>
+          </PrivateRoute>
+        }
+      />
+
+      {/* Catch all unknown routes and redirect accordingly */}
+      <Route
+        path="*"
+        element={
+          isAuthenticated() ? <Navigate to="/" /> : <Navigate to="/login" />
+        }
+      />
+    </Routes>
+  );
+};
+
+export default AppRoutes;
