@@ -184,7 +184,7 @@ const JobTable = () => {
 
   {/* Center: Page info */}
   <div className="text-gray-700 text-sm font-medium">
-    Page {page} of {totalPages}
+    Page {page} / {totalPages}
   </div>
 
   {/* Right: Numbered Pagination only */}

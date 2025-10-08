@@ -6,7 +6,7 @@ export const fetchJobs = async (page = 1, searchTerm = "") => {
     {
       id: 1,
       title: "Frontend Developer",
-      company: "TechCorp",
+      company: "TechCorp",  
       category: "IT",
       location: "New York",
       type: "Full-Time",
@@ -68,5 +68,5 @@ export const fetchJobs = async (page = 1, searchTerm = "") => {
   // Simulate API delay
   await new Promise((res) => setTimeout(res, 500));
 
-  return { jobs, totalPages };
+  return { jobs, totalPages,total: filtered.length };
 };

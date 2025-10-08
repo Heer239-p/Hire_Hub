@@ -19,7 +19,7 @@ import {
 // Import your services
 import { fetchJobs } from "../services/jobService";
 import { fetchUsers } from "../services/userService";
-
+import { fetchApplications } from "../services/applicationServices";
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
@@ -47,15 +47,16 @@ const Dashboard = () => {
     // Fetch counts dynamically
     const loadCounts = async () => {
       const jobsData = await fetchJobs(1, "", 1000); // fetch all jobs
-      setJobCount(jobsData.jobs.length);
+      setJobCount(jobsData.total || jobsData.jobs.length );
 
       const usersData = await fetchUsers(1, "", 1000); // fetch all users
-      setUserCount(usersData.users.length);
+      setUserCount(usersData.total || usersData.users.length );
 
       // Optional if you have applications
       if (fetchApplications) {
         const appsData = await fetchApplications(1, "", 1000);
-        setApplicationCount(appsData.applications.length);
+        setApplicationCount(appsData.total || appsData.applications.length);
+
       } else {
         setApplicationCount(350); // fallback static
       }
@@ -110,26 +111,41 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white p-8">
       {/* Stats Section */}
-      <section className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-        {stats.map(({ label, value, icon: Icon, iconColor, bgColor, path }, idx) => (
-          <div
-            key={idx}
-            className="flex items-center space-x-5 bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300 cursor-pointer"
-            onClick={() => navigate(path)}
-          >
-            <div
-              className={`${bgColor} p-4 rounded-full flex items-center justify-center`}
-              style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}
-            >
-              <Icon className={`${iconColor} text-3xl`} />
-            </div>
-            <div>
-              <p className="text-3xl font-bold text-gray-900">{value}</p>
-              <p className="mt-1 text-sm uppercase tracking-wide text-gray-500">{label}</p>
-            </div>
-          </div>
-        ))}
-      </section>
+      {/* Stats Section */}
+<section className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-10">
+  {stats.map(({ label, value, icon: Icon, iconColor, bgColor, path }, idx) => (
+    <div
+      key={idx}
+      onClick={() => navigate(path)}
+      className="flex items-center bg-white rounded-2xl shadow-md p-4 sm:p-5 md:p-6 
+                 hover:shadow-lg transition-all cursor-pointer min-h-[100px] sm:min-h-[120px] overflow-hidden"
+    >
+      <div
+        className={`${bgColor} p-3 sm:p-4 rounded-full flex items-center justify-center shrink-0`}
+        style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}
+      >
+        <Icon className={`${iconColor} text-xl sm:text-2xl md:text-3xl`} />
+      </div>
+
+      {/* Text Area */}
+      <div className="flex flex-col flex-1 min-w-0 ml-3 sm:ml-4">
+        <p
+          className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 truncate"
+          style={{ lineHeight: "1.2" }}
+        >
+          {value}
+        </p>
+        <p
+          className="mt-1 text-xs sm:text-sm md:text-base uppercase tracking-wide text-gray-500 truncate"
+          title={label} // shows full text on hover
+        >
+          {label}
+        </p>
+      </div>
+    </div>
+  ))}
+</section>
+
 
       {/* Charts Section */}
       <section className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
