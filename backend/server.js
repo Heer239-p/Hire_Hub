@@ -23,7 +23,7 @@ app.use("/uploads", express.static("src/uploads"));
 app.use("/api/auth", authRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/admin", adminRoutes);
-app.use("/api/users", userRoutes);
+app.use("/api/user", userRoutes);
 // ✅ Default test route (to confirm API is running)
 app.get("/", (req, res) => {
   res.status(200).json({
