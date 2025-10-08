@@ -106,6 +106,11 @@ const Sidebar = ({ collapsed }) => {
       {/* Top - Logo and Nav */}
       <div>
         <div className="h-16 flex items-center justify-center ">
+             <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1T7QK6Tm3aWgDCBGJdcaCPTmMkpx9ClSSGA&s"
+            alt="user"
+            className="w-8 h-8 rounded-full"
+          />
           {collapsed ? (
             <span className="text-2xl font-bold">H</span>
           ) : (

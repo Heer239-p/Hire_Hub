@@ -70,5 +70,5 @@ export const fetchUsers = async (page = 1, searchTerm = "") => {
   // Simulate API delay
   await new Promise((res) => setTimeout(res, 500));
 
-  return { users, totalPages };
+  return { users, totalPages, total: filtered.length };
 };

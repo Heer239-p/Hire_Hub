@@ -10,8 +10,10 @@ import {
   FiMoon,
 } from "react-icons/fi";
 
+// ✅ Import your image correctly
+import adminDP from "../assets/images/admin_dp.png";
+
 const Header = ({ onToggleSidebar, onLogout }) => {
-  // Dark mode state with localStorage persistence
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
       const savedTheme = localStorage.getItem("theme");
@@ -56,41 +58,27 @@ const Header = ({ onToggleSidebar, onLogout }) => {
 
       {/* Right controls */}
       <div className="flex items-center gap-6">
-        {/* Dark Mode Toggle */}
-        {/* <button
-          onClick={() => setDarkMode(!darkMode)}
-          className="p-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-          aria-label="Toggle Dark Mode"
-          title="Toggle Dark Mode"
-        >
-          {darkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
-        </button> */}
-
         <FiBell className="text-xl text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" />
-        <FiMail className="text-xl text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" />
+        {/* <FiMail className="text-xl text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" /> */}
 
-        <div className="flex items-center gap-2">
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1T7QK6Tm3aWgDCBGJdcaCPTmMkpx9ClSSGA&s"
-            alt="user"
-            className="w-8 h-8 rounded-full"
-          />
-          <span className="text-sm text-gray-700 dark:text-gray-300">
-            Hiral 
+        {/* Profile section */}
+        <div className="flex items-center gap-2 cursor-pointer">
+          {/* <img
+            src={adminDP}
+            alt="Admin Profile"
+            className="w-15 h-15 rounded-full object-cover "
+          /> */}
+          <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">
+            Hiral
           </span>
-          <FiChevronDown className="text-gray-600 dark:text-gray-300" />
-        </div>
 
-        {/* Logout button */}
-        {/* <button
-          onClick={onLogout}
-          className="flex items-center gap-1 p-2 rounded-md bg-red-500 hover:bg-red-600 text-white text-sm"
-          aria-label="Logout"
-          title="Logout"
-        >
-          <FiLogOut size={18} />
-          Logout
-        </button> */}
+          <FiChevronDown className="text-gray-600 dark:text-gray-300" />
+           <img
+            src={adminDP}
+            alt="Admin Profile"
+            className="w-15 h-15 rounded-full object-cover "
+          />
+        </div>
       </div>
     </header>
   );
