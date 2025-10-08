@@ -13,6 +13,11 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
     profileImage: { type: String },
+    // Employer-specific fields
+    companyName: { type: String },
+    companyWebsite: { type: String },
+    companyDescription: { type: String },
+    industry: { type: String },
   },
   { timestamps: true }
 );
