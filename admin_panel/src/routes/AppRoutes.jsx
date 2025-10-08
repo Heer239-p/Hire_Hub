@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-
+import Companies from '../pages/Companies';
 import Dashboard from '../pages/Dashboard';
 import Jobs from '../pages/Jobs';
 import Users from '../pages/Users';
@@ -60,6 +60,20 @@ const AppRoutes = () => {
           </PrivateRoute>
         }
       />
+
+      <Route
+  path="/companies"
+  element={
+    <PrivateRoute>
+      <AdminLayout>
+        <Companies />
+      </AdminLayout>
+    </PrivateRoute>
+  }
+/>
+
+
+
 
       {/* Catch all unknown routes and redirect accordingly */}
       <Route
