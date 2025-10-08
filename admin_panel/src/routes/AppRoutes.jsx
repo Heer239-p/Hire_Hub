@@ -9,6 +9,7 @@ import Login from '../pages/Login';
 import PrivateRoute from '../components/PrivateRoute';
 import AdminLayout from '../layouts/AdminLayout';  // <-- import layout here
 import { isAuthenticated } from '../utils/auth';
+import Employers from '../pages/employers';
 
 const AppRoutes = () => {
   return (
@@ -71,6 +72,18 @@ const AppRoutes = () => {
     </PrivateRoute>
   }
 />
+
+
+ <Route
+        path="/employers"
+        element={
+          <PrivateRoute>
+            <AdminLayout>
+              <Employers />
+            </AdminLayout>
+          </PrivateRoute>
+        }
+      />
 
 
 

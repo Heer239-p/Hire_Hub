@@ -3,6 +3,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { CSVLink } from "react-csv";
 import { Pagination, Select, MenuItem } from "@mui/material";
+import { FiEdit, FiTrash2 } from "react-icons/fi"; // 👈 icons imported
 
 const Companies = () => {
   const allCompanies = [  
@@ -96,12 +97,20 @@ const Companies = () => {
                   <td className="p-3">{c.location}</td>
                   <td className="p-3">{c.industry}</td>
                   <td className="p-3">{c.status}</td>
-                  <td className="p-3 space-x-2">
-                    <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
-                      Edit
+
+                  {/* 👇 Action Icons */}
+                  <td className="p-3 flex items-center space-x-3">
+                    <button
+                      className="text-blue-500 hover:text-blue-700"
+                      title="Edit Company"
+                    >
+                      <FiEdit size={18} />
                     </button>
-                    <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
-                      Delete
+                    <button
+                      className="text-red-500 hover:text-red-700"
+                      title="Delete Company"
+                    >
+                      <FiTrash2 size={18} />
                     </button>
                   </td>
                 </tr>

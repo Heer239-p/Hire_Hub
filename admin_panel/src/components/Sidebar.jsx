@@ -1,5 +1,7 @@
+
+
 // import React from 'react';
-// import { FiHome, FiBriefcase, FiUsers, FiFileText, FiLogOut } from 'react-icons/fi';
+// import { FiHome, FiBriefcase, FiUsers, FiFileText, FiArchive, FiLogOut } from 'react-icons/fi';
 // import { Link, useLocation, useNavigate } from 'react-router-dom';
 // import { logout } from '../utils/auth'; // import logout function
 
@@ -8,6 +10,7 @@
 //   { label: 'Jobs', path: '/jobs', icon: FiBriefcase },
 //   { label: 'Users', path: '/users', icon: FiUsers },
 //   { label: 'Applications', path: '/applications', icon: FiFileText },
+//   { label: 'Companies', path: '/companies', icon: FiArchive }, // new item
 // ];
 
 // const Sidebar = ({ collapsed }) => {
@@ -28,6 +31,11 @@
 //       {/* Top - Logo and Nav */}
 //       <div>
 //         <div className="h-16 flex items-center justify-center ">
+//              <img
+//             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1T7QK6Tm3aWgDCBGJdcaCPTmMkpx9ClSSGA&s"
+//             alt="user"
+//             className="w-8 h-8 rounded-full"
+//           />
 //           {collapsed ? (
 //             <span className="text-2xl font-bold">H</span>
 //           ) : (
@@ -59,7 +67,7 @@
 //       </div>
 
 //       {/* Bottom - Logout */}
-//       <div className="p-4  ">
+//       <div className="p-4">
 //         <button
 //           className="flex items-center gap-4 w-full p-2 rounded-md hover:bg-red-600 hover:text-white transition-colors"
 //           onClick={handleLogout}
@@ -76,16 +84,17 @@
 
 
 import React from 'react';
-import { FiHome, FiBriefcase, FiUsers, FiFileText, FiArchive, FiLogOut } from 'react-icons/fi';
+import { FiHome, FiBriefcase, FiUsers, FiFileText, FiArchive, FiUserPlus, FiLogOut } from 'react-icons/fi';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { logout } from '../utils/auth'; // import logout function
+import { logout } from '../utils/auth';
 
 const navItems = [
   { label: 'Dashboard', path: '/', icon: FiHome },
   { label: 'Jobs', path: '/jobs', icon: FiBriefcase },
   { label: 'Users', path: '/users', icon: FiUsers },
   { label: 'Applications', path: '/applications', icon: FiFileText },
-  { label: 'Companies', path: '/companies', icon: FiArchive }, // new item
+  { label: 'Companies', path: '/companies', icon: FiArchive },
+  { label: "Employers", path: "/employers", icon: FiUserPlus }, // New item
 ];
 
 const Sidebar = ({ collapsed }) => {
@@ -105,19 +114,18 @@ const Sidebar = ({ collapsed }) => {
     >
       {/* Top - Logo and Nav */}
       <div>
-        <div className="h-16 flex items-center justify-center ">
-             <img
+        <div className="h-16 flex items-center justify-center">
+          <img
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1T7QK6Tm3aWgDCBGJdcaCPTmMkpx9ClSSGA&s"
-            alt="user"
+            alt="logo"
             className="w-8 h-8 rounded-full"
           />
-          {collapsed ? (
-            <span className="text-2xl font-bold">H</span>
-          ) : (
-            <h1 className="text-2xl font-bold tracking-wide">
+          {!collapsed && (
+            <h1 className="text-2xl font-bold tracking-wide ml-2">
               Hire<span className="text-blue-500">Hub</span>
             </h1>
           )}
+          {collapsed && <span className="text-2xl font-bold ml-1">H</span>}
         </div>
 
         <nav className="flex flex-col gap-2 p-4">
