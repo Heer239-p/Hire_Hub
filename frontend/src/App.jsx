@@ -7,7 +7,7 @@ const App = () => {
   // Default landing page content
   return (
     <Layout>
-      <Home />
+      <Home/>
     
     </Layout>
   );
