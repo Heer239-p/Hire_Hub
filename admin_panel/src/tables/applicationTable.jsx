@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { fetchApplications } from "../services/applicationServices"; // import service
+import { fetchApplications } from "../services/applicationServices";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { CSVLink } from "react-csv";
 import { Pagination, Select, MenuItem } from "@mui/material";
+import { FiEye, FiTrash2 } from "react-icons/fi"; // 👈 icons imported
 
 const ApplicationTable = () => {
   const [applications, setApplications] = useState([]);
@@ -12,7 +13,6 @@ const ApplicationTable = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // Fetch applications on load or when filters change
   useEffect(() => {
     loadApplications();
   }, [page, searchTerm, rowsPerPage]);
@@ -27,7 +27,7 @@ const ApplicationTable = () => {
     }
   };
 
-  // Export to PDF
+  // Export PDF
   const exportPDF = () => {
     const doc = new jsPDF();
     autoTable(doc, {
@@ -43,7 +43,7 @@ const ApplicationTable = () => {
     doc.save("applications.pdf");
   };
 
-  // Export to CSV
+  // Export CSV
   const csvData = applications.map((a) => ({
     "Job Title": a.jobTitle,
     Applicant: a.applicant,
@@ -111,12 +111,20 @@ const ApplicationTable = () => {
                   <td className="p-3">{a.email}</td>
                   <td className="p-3">{a.status}</td>
                   <td className="p-3">{a.appliedDate}</td>
-                  <td className="p-3 space-x-2">
-                    <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
-                      View
+
+                  {/* 👇 Action Icons */}
+                  <td className="p-3 flex items-center space-x-3">
+                    <button
+                      className="text-blue-500 hover:text-blue-700"
+                      title="View Application"
+                    >
+                      <FiEye size={18} />
                     </button>
-                    <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
-                      Delete
+                    <button
+                      className="text-red-500 hover:text-red-700"
+                      title="Delete Application"
+                    >
+                      <FiTrash2 size={18} />
                     </button>
                   </td>
                 </tr>
@@ -137,7 +145,6 @@ const ApplicationTable = () => {
 
       {/* Pagination Controls */}
       <div className="flex flex-col sm:flex-row justify-between items-center mt-6 px-4 gap-4">
-        {/* Left: Rows per page */}
         <div className="flex items-center space-x-2">
           <span className="text-gray-700 text-sm font-medium">Show per page:</span>
           <Select
@@ -157,12 +164,10 @@ const ApplicationTable = () => {
           </Select>
         </div>
 
-        {/* Center: Page info */}
         <div className="text-gray-700 text-sm font-medium">
           Page {page} / {totalPages}
         </div>
 
-        {/* Right: Pagination */}
         <Pagination
           count={totalPages}
           page={page}

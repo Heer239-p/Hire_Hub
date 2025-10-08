@@ -4,13 +4,14 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { CSVLink } from "react-csv";
 import { Pagination, Select, MenuItem } from "@mui/material";
+import { FiEye, FiEdit, FiTrash2 } from "react-icons/fi"; // 👈 added icons
 
 const JobTable = () => {
   const [jobs, setJobs] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10); // dynamic rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     loadJobs();
@@ -18,7 +19,7 @@ const JobTable = () => {
 
   const loadJobs = async () => {
     try {
-      const data = await fetchJobs(page, searchTerm, rowsPerPage); // pass rowsPerPage to API
+      const data = await fetchJobs(page, searchTerm, rowsPerPage);
       setJobs(data.jobs);
       setTotalPages(data.totalPages);
     } catch (error) {
@@ -140,12 +141,26 @@ const JobTable = () => {
                   <td className="p-3">{job.expiryDate}</td>
                   <td className="p-3 text-center">{job.applications}</td>
                   <td className="p-3">{job.status}</td>
-                  <td className="p-3 space-x-2">
-                    <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
-                      Edit
+
+                  {/* 👇 Action Icons */}
+                  <td className="p-3 flex items-center space-x-3">
+                    <button
+                      className="text-blue-500 hover:text-blue-700"
+                      title="View Job"
+                    >
+                      <FiEye size={18} />
                     </button>
-                    <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
-                      Delete
+                    <button
+                      className="text-green-500 hover:text-green-700"
+                      title="Edit Job"
+                    >
+                      <FiEdit size={18} />
+                    </button>
+                    <button
+                      className="text-red-500 hover:text-red-700"
+                      title="Delete Job"
+                    >
+                      <FiTrash2 size={18} />
                     </button>
                   </td>
                 </tr>
@@ -163,44 +178,41 @@ const JobTable = () => {
           </tbody>
         </table>
       </div>
-{/* Custom Pagination Controls */}
-<div className="flex flex-col sm:flex-row justify-between items-center mt-6 px-4 gap-4">
-  {/* Left: Show per page */}
-  <div className="flex items-center space-x-2">
-    <span className="text-gray-700 text-sm font-medium">Show per page:</span>
-    <Select
-      value={rowsPerPage}
-      size="small"
-      onChange={(e) => setRowsPerPage(e.target.value)}
-      className="bg-white"
-    >
-      {[5, 10, 20, 50].map((num) => (
-        <MenuItem key={num} value={num}>
-          {num}
-        </MenuItem>
-      ))}
-    </Select>
-  </div>
 
-  {/* Center: Page info */}
-  <div className="text-gray-700 text-sm font-medium">
-    Page {page} / {totalPages}
-  </div>
+      {/* Pagination Controls */}
+      <div className="flex flex-col sm:flex-row justify-between items-center mt-6 px-4 gap-4">
+        <div className="flex items-center space-x-2">
+          <span className="text-gray-700 text-sm font-medium">
+            Show per page:
+          </span>
+          <Select
+            value={rowsPerPage}
+            size="small"
+            onChange={(e) => setRowsPerPage(e.target.value)}
+            className="bg-white"
+          >
+            {[5, 10, 20, 50].map((num) => (
+              <MenuItem key={num} value={num}>
+                {num}
+              </MenuItem>
+            ))}
+          </Select>
+        </div>
 
-  {/* Right: Numbered Pagination only */}
-  <Pagination
-    count={totalPages}
-    page={page}
-    onChange={(e, value) => setPage(value)}
-    color="primary"
-    shape="rounded"
-    siblingCount={1}   // number of adjacent pages
-    boundaryCount={0}  // remove first/last buttons
-    hidePrevButton={false} // show "<"
-  hideNextButton={false}      // hide next arrow
-  />
-</div>
+        <div className="text-gray-700 text-sm font-medium">
+          Page {page} / {totalPages}
+        </div>
 
+        <Pagination
+          count={totalPages}
+          page={page}
+          onChange={(e, value) => setPage(value)}
+          color="primary"
+          shape="rounded"
+          siblingCount={1}
+          boundaryCount={0}
+        />
+      </div>
     </div>
   );
 };
