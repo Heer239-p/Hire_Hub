@@ -31,7 +31,7 @@ export const registerUser = async (req, res) => {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user object
+    // Create user object with defaults for company fields
     const userData = {
       firstName,
       lastName,
@@ -41,13 +41,16 @@ export const registerUser = async (req, res) => {
       role: role || "user",
       profileImage,
     };
+if (role !== "employer" && (companyName || companyWebsite || companyDescription || industry)) {
+  return res.status(400).json({ message: "Only employers can add company details" });
+}
 
-    // Only set company fields if role is employer
+    // Only set company fields if role is employer, using defaults if missing
     if (role === "employer") {
-      userData.companyName = companyName;
-      userData.companyWebsite = companyWebsite;
-      userData.companyDescription = companyDescription;
-      userData.industry = industry;
+      userData.companyName = companyName || "Unknown Company";
+      userData.companyWebsite = companyWebsite || "";
+      userData.companyDescription = companyDescription || "";
+      userData.industry = industry || "";
     }
 
     // Create new user
@@ -73,6 +76,7 @@ export const registerUser = async (req, res) => {
     res.status(500).json({ message: "Error registering user", error });
   }
 };
+
 
 // ==========================
 // LOGIN USER
