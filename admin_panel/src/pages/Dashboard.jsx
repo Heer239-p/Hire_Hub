@@ -99,9 +99,9 @@ const Dashboard = () => {
   }, []);
 
   const stats = [
-    { label: "Total Jobs", value: jobCount, icon: FiBriefcase, bgColor: "bg-blue-100", path: "/jobs" },
-    { label: "Registered Users", value: userCount, icon: FiUsers, bgColor: "bg-green-100", path: "/users" },
-    { label: "Applications", value: applicationCount, icon: FiFileText, bgColor: "bg-purple-100", path: "/applications" },
+    { label: "Total Jobs", value: jobCount, icon: FiBriefcase, bgColor: "bg-blue-300", path: "/jobs" },
+    { label: "Registered Users", value: userCount, icon: FiUsers, bgColor: "bg-green-200", path: "/users" },
+    { label: "Applications", value: applicationCount, icon: FiFileText, bgColor: "bg-purple-200", path: "/applications" },
   ];
 
   const chartData = [
@@ -115,7 +115,7 @@ const Dashboard = () => {
   ];
 
   const pieData = [
-    { name: "Jobs", value: jobCount, color: "#3b82f6" },
+    { name: "Jobs", value: jobCount, color: "#3b82f6", },
     { name: "Users", value: userCount, color: "#10b981" },
     { name: "Applications", value: applicationCount, color: "#8b5cf6" },
   ];
@@ -123,23 +123,24 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white p-8">
       {/* Stats */}
-      <section className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-10">
-        {stats.map(({ label, value, icon: Icon, bgColor, path }, idx) => (
-          <div
-            key={idx}
-            onClick={() => navigate(path)}
-            className="flex items-center bg-white rounded-2xl shadow-md p-4 sm:p-5 md:p-6 hover:shadow-lg transition-all cursor-pointer min-h-[100px] sm:min-h-[120px]"
-          >
-            <div className={`${bgColor} p-3 sm:p-4 rounded-full flex items-center justify-center shrink-0`}>
-              <Icon className="text-xl sm:text-2xl md:text-3xl text-gray-700" />
-            </div>
-            <div className="flex flex-col flex-1 min-w-0 ml-3 sm:ml-4">
-              <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">{value}</p>
-              <p className="mt-1 text-xs sm:text-sm md:text-base uppercase tracking-wide text-gray-500">{label}</p>
-            </div>
-          </div>
-        ))}
-      </section>
+     <section className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-10">
+  {stats.map(({ label, value, icon: Icon, bgColor, path }, idx) => (
+    <div
+      key={idx}
+      onClick={() => navigate(path)}
+      className={`flex items-center ${bgColor} rounded-2xl shadow-md p-4 sm:p-5 md:p-6 hover:shadow-lg transition-all cursor-pointer min-h-[100px] sm:min-h-[120px]`}
+    >
+      <div className={`p-3 sm:p-4 rounded-full flex items-center justify-center shrink-0 ${bgColor.replace("-100","-300")}`}>
+        <Icon className="text-xl sm:text-2xl md:text-3xl text-gray-700" />
+      </div>
+      <div className="flex flex-col flex-1 min-w-0 ml-3 sm:ml-4">
+        <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">{value}</p>
+        <p className="mt-1 text-xs sm:text-sm md:text-base uppercase tracking-wide text-gray-500">{label}</p>
+      </div>
+    </div>
+  ))}
+</section>
+
 
       {/* Charts */}
       <section className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">

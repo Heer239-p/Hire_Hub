@@ -1,38 +1,109 @@
-// src/pages/Profile.jsx
-import React from "react";
+import React, { useState } from "react";
+import { FiEdit,FiCamera  } from "react-icons/fi";
 
 const Profile = () => {
-  // You can hardcode admin details or fetch dynamically
+  const [profileImage, setProfileImage] = useState(
+    "https://www.pngmart.com/files/21/Admin-Profile-Vector-PNG-Clipart.png"
+  );
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProfileImage(URL.createObjectURL(file));
+    }
+  };
+
   const admin = {
-    name: "Admin Name",
+    firstName: "Admin",
+    lastName: "Name",
+    dob: "1990-01-01",
     email: "admin@company.com",
     phone: "+91 1234567890",
     role: "Administrator",
-    profileImage: "https://www.pngmart.com/files/21/Admin-Profile-Vector-PNG-Clipart.png",
-    joinedAt: "2024-01-15",
+    country: "India",
+    city: "Ahmedabad",
+    pincode: "380001",
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen flex justify-center">
-      <div className="bg-white rounded-xl shadow-lg p-6 w-11/12 md:w-2/3 lg:w-1/2">
-        <h2 className="text-2xl font-semibold mb-6 text-center text-gray-800">Admin Profile</h2>
-
+    <div className="min-h-screen bg-gray-50 p-8 flex flex-col gap-6">
+     <h3 className="text-2xl font-bold mb-6 text-gray-800">My Profile</h3>
+      {/* Card 1: Profile */}
+      <div className="bg-white rounded-2xl shadow-md p-6 flex items-center gap-6">
         {/* Profile Image */}
-        <div className="flex justify-center mb-6">
+                <div className="relative">
           <img
-            src={admin.profileImage}
-            alt={admin.name}
-            className="w-28 h-28 rounded-full border border-gray-300"
+            src={profileImage}
+            alt="Profile"
+            className="w-32 h-32 rounded-full border-4 border-indigo-400 object-cover"
           />
+          <label className="absolute bottom-0 right-0 bg-indigo-500 p-2 rounded-full cursor-pointer text-white shadow hover:bg-indigo-600">
+            <input type="file" className="hidden" onChange={handleImageUpload} />
+            <FiCamera size={18} />
+          </label>
         </div>
 
-        {/* Admin Details */}
+        {/* Profile Info */}
+        <div className="flex flex-col justify-center gap-1">
+          <p className="text-2xl font-semibold text-gray-800">{`${admin.firstName} ${admin.lastName}`}</p>
+          <p className="text-gray-500">{admin.country}</p>
+          <p className="text-gray-500">{admin.email}</p>
+        </div>
+      </div>
+
+      {/* Card 2: Personal Information */}
+      <div className="bg-white rounded-2xl shadow-md p-6 relative">
+        <button className="absolute top-4 right-4 text-gray-600 hover:text-gray-800">
+          <FiEdit size={20} />
+        </button>
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Personal Information</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
-          <p><strong>Name:</strong> {admin.name}</p>
-          <p><strong>Email:</strong> {admin.email}</p>
-          <p><strong>Phone:</strong> {admin.phone}</p>
-          <p><strong>Role:</strong> {admin.role}</p>
-          <p><strong>Joined At:</strong> {new Date(admin.joinedAt).toLocaleDateString()}</p>
+          <div>
+            <p className="font-medium">First Name</p>
+            <p>{admin.firstName}</p>
+          </div>
+          <div>
+            <p className="font-medium">Last Name</p>
+            <p>{admin.lastName}</p>
+          </div>
+          <div>
+            <p className="font-medium">Date of Birth</p>
+            <p>{admin.dob}</p>
+          </div>
+          <div>
+            <p className="font-medium">Email</p>
+            <p>{admin.email}</p>
+          </div>
+          <div>
+            <p className="font-medium">Phone</p>
+            <p>{admin.phone}</p>
+          </div>
+          <div>
+            <p className="font-medium">Role</p>
+            <p>{admin.role}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Card 3: Address */}
+      <div className="bg-white rounded-2xl shadow-md p-6 relative">
+        <button className="absolute top-4 right-4 text-gray-600 hover:text-gray-800">
+          <FiEdit size={20} />
+        </button>
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Address</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-gray-700">
+          <div>
+            <p className="font-medium">Country</p>
+            <p>{admin.country}</p>
+          </div>
+          <div>
+            <p className="font-medium">City</p>
+            <p>{admin.city}</p>
+          </div>
+          <div>
+            <p className="font-medium">Pincode</p>
+            <p>{admin.pincode}</p>
+          </div>
         </div>
       </div>
     </div>
