@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { fetchJobs } from "../services/jobService";
+import React, { useState, useEffect } from "react";
+import { Pagination, Select, MenuItem } from "@mui/material";
+import { FiEye, FiEdit, FiTrash2, FiPlus } from "react-icons/fi";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { CSVLink } from "react-csv";
-import { Pagination, Select, MenuItem } from "@mui/material";
-import { FiEdit, FiTrash2, FiPlus, FiEye } from "react-icons/fi";
 
 import AddModel from "../models/job/addModel";
 import ViewModel from "../models/job/viewModel";
@@ -12,49 +11,75 @@ import UpdateModel from "../models/job/updateModel";
 import DeleteModel from "../models/job/deleteModel";
 
 const JobTable = () => {
-  const [jobs, setJobs] = useState([]);
+  // Load jobs from localStorage or use default
+  const storedJobs = JSON.parse(localStorage.getItem("jobs")) || [
+    {
+      id: 1,
+      title: "Frontend Developer",
+      company: "Tech Corp",
+      category: "IT",
+      location: "Remote",
+      type: "Full-time",
+      postedDate: "2025-10-01",
+      expiryDate: "2025-11-01",
+      applications: 5,
+      status: "Active",
+    },
+    {
+      id: 2,
+      title: "UI/UX Designer",
+      company: "Creative Studio",
+      category: "Design",
+      location: "Onsite",
+      type: "Contract",
+      postedDate: "2025-09-20",
+      expiryDate: "2025-10-20",
+      applications: 3,
+      status: "Active",
+    },
+  ];
+
+  const [jobs, setJobs] = useState(storedJobs);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedJob, setSelectedJob] = useState(null);
 
   const [openAdd, setOpenAdd] = useState(false);
+  const [openView, setOpenView] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [openView, setOpenView] = useState(false);
 
+  // Persist jobs to localStorage whenever jobs state changes
   useEffect(() => {
-    loadJobs();
-  }, [page, searchTerm, rowsPerPage]);
+    localStorage.setItem("jobs", JSON.stringify(jobs));
+  }, [jobs]);
 
-  const loadJobs = async () => {
-    try {
-      const data = await fetchJobs(page, searchTerm, rowsPerPage);
-      setJobs(data.jobs);
-      setTotalPages(data.totalPages);
-    } catch (error) {
-      console.error("Failed to fetch jobs:", error);
-    }
-  };
+  // Filter and paginate jobs
+  const filteredJobs = jobs.filter(
+    (job) =>
+      job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.status.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
+  const totalPages = Math.ceil(filteredJobs.length / rowsPerPage);
+  const paginatedJobs = filteredJobs.slice(
+    (page - 1) * rowsPerPage,
+    page * rowsPerPage
+  );
+
+  // PDF Export
   const exportPDF = () => {
     const doc = new jsPDF();
     autoTable(doc, {
       head: [
-        [
-          "Title",
-          "Company",
-          "Category",
-          "Location",
-          "Type",
-          "Posted",
-          "Expiry",
-          "Apps",
-          "Status",
-        ],
+        ["Title", "Company", "Category", "Location", "Type", "Posted", "Expiry", "Apps", "Status"],
       ],
-      body: jobs.map((job) => [
+      body: filteredJobs.map((job) => [
         job.title,
         job.company,
         job.category,
@@ -69,7 +94,8 @@ const JobTable = () => {
     doc.save("jobs.pdf");
   };
 
-  const csvData = jobs.map((job) => ({
+  // CSV Export
+  const csvData = filteredJobs.map((job) => ({
     Title: job.title,
     Company: job.company,
     Category: job.category,
@@ -81,22 +107,31 @@ const JobTable = () => {
     Status: job.status,
   }));
 
-  const handleAddJob = (newJob) => setJobs([...jobs, { id: Date.now(), ...newJob }]);
-  const handleUpdateJob = (updatedJob) =>
-    setJobs(jobs.map((j) => (j.id === updatedJob.id ? updatedJob : j)));
-  const handleDeleteJob = (id) => setJobs(jobs.filter((j) => j.id !== id));
+  // CRUD Handlers
+  const handleAddJob = (newJob) => {
+    const jobWithId = { id: Date.now(), applications: 0, status: "Active", ...newJob };
+    setJobs([...jobs, jobWithId]);
+  };
+
+  const handleUpdateJob = (updatedJob) => {
+    setJobs(jobs.map((job) => (job.id === updatedJob.id ? updatedJob : job)));
+  };
+
+  const handleDeleteJob = (id) => {
+    setJobs(jobs.filter((job) => job.id !== id));
+  };
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <h1 className="text-3xl font-semibold mb-6 text-gray-800">Manage Jobs</h1>
 
-      {/* Search & Export */}
+      {/* Search & Actions */}
       <div className="flex items-center justify-between mb-5">
         <input
           type="text"
           placeholder="Search jobs..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
           className="border border-gray-300 rounded-lg px-4 py-2 w-1/3 focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
 
@@ -105,8 +140,7 @@ const JobTable = () => {
             onClick={() => setOpenAdd(true)}
             className="flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow"
           >
-            <FiPlus className="mr-2" size={18} />
-            Add Job
+            <FiPlus className="mr-2" size={18} /> Add Job
           </button>
 
           <button
@@ -131,31 +165,15 @@ const JobTable = () => {
         <table className="w-full bg-white text-sm border-t border-gray-300 border-collapse">
           <thead className="bg-blue-500 text-white uppercase text-sm">
             <tr>
-              {[
-                "Title",
-                "Company",
-                "Category",
-                "Location",
-                "Type",
-                "Posted",
-                "Expiry",
-                "Apps",
-                "Status",
-                "Actions",
-              ].map((head) => (
-                <th key={head} className="p-3 text-left font-semibold">
-                  {head}
-                </th>
+              {["Title","Company","Category","Location","Type","Posted","Expiry","Apps","Status","Actions"].map((head) => (
+                <th key={head} className="p-3 text-left font-semibold">{head}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {jobs.length ? (
-              jobs.map((job) => (
-                <tr
-                  key={job.id}
-                  className="border-b border-gray-200 hover:bg-gray-50 transition"
-                >
+            {paginatedJobs.length ? (
+              paginatedJobs.map((job) => (
+                <tr key={job.id} className="border-b border-gray-200 hover:bg-gray-50 transition">
                   <td className="p-3">{job.title}</td>
                   <td className="p-3">{job.company}</td>
                   <td className="p-3">{job.category}</td>
@@ -166,47 +184,15 @@ const JobTable = () => {
                   <td className="p-3 text-center">{job.applications}</td>
                   <td className="p-3">{job.status}</td>
                   <td className="p-3 flex items-center space-x-3">
-                    <button
-                      className="text-blue-500 hover:text-blue-700"
-                      title="View Job"
-                      onClick={() => {
-                        setSelectedJob(job);
-                        setOpenView(true);
-                      }}
-                    >
-                      <FiEye size={18} />
-                    </button>
-
-                    <button
-                      className="text-green-500 hover:text-green-700"
-                      title="Edit Job"
-                      onClick={() => {
-                        setSelectedJob(job);
-                        setOpenUpdate(true);
-                      }}
-                    >
-                      <FiEdit size={18} />
-                    </button>
-
-                    <button
-                      className="text-red-500 hover:text-red-700"
-                      title="Delete Job"
-                      onClick={() => {
-                        setSelectedJob(job);
-                        setOpenDelete(true);
-                      }}
-                    >
-                      <FiTrash2 size={18} />
-                    </button>
+                    <button className="text-blue-500 hover:text-blue-700" onClick={() => { setSelectedJob(job); setOpenView(true); }}><FiEye size={18} /></button>
+                    <button className="text-green-500 hover:text-green-700" onClick={() => { setSelectedJob(job); setOpenUpdate(true); }}><FiEdit size={18} /></button>
+                    <button className="text-red-500 hover:text-red-700" onClick={() => { setSelectedJob(job); setOpenDelete(true); }}><FiTrash2 size={18} /></button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td
-                  colSpan="10"
-                  className="text-center p-5 text-gray-500 border-t border-gray-300"
-                >
+                <td colSpan="10" className="text-center p-5 text-gray-500 border-t border-gray-300">
                   No jobs found.
                 </td>
               </tr>
@@ -222,40 +208,29 @@ const JobTable = () => {
           <Select
             value={rowsPerPage}
             size="small"
-            onChange={(e) => {
-              setRowsPerPage(e.target.value);
-              setPage(1);
-            }}
+            onChange={(e) => { setRowsPerPage(e.target.value); setPage(1); }}
             className="bg-white"
           >
-            {[5, 10, 20, 50].map((num) => (
-              <MenuItem key={num} value={num}>
-                {num}
-              </MenuItem>
-            ))}
+            {[5, 10, 20, 50].map((num) => <MenuItem key={num} value={num}>{num}</MenuItem>)}
           </Select>
         </div>
-
-        <div className="text-gray-700 text-sm font-medium">
-          Page {page} / {totalPages}
-        </div>
-
+        <div className="text-gray-700 text-sm font-medium">Page {page} / {totalPages}</div>
         <Pagination
           count={totalPages}
           page={page}
           onChange={(e, value) => setPage(value)}
           color="primary"
           shape="rounded"
-          siblingCount={1}
+          siblingCount={0}
           boundaryCount={0}
         />
       </div>
 
-      {/* Models */}
+      {/* Modals */}
       {openAdd && <AddModel onClose={() => setOpenAdd(false)} onAdd={handleAddJob} />}
+      {openView && <ViewModel job={selectedJob} onClose={() => setOpenView(false)} />}
       {openUpdate && <UpdateModel job={selectedJob} onClose={() => setOpenUpdate(false)} onUpdate={handleUpdateJob} />}
       {openDelete && <DeleteModel job={selectedJob} onClose={() => setOpenDelete(false)} onConfirm={() => { handleDeleteJob(selectedJob.id); setOpenDelete(false); }} />}
-      {openView && <ViewModel job={selectedJob} onClose={() => setOpenView(false)} />}
     </div>
   );
 };

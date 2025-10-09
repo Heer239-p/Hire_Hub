@@ -1,18 +1,32 @@
 import React, { useState } from "react";
+import { FiCamera } from "react-icons/fi";
+
+const categories = ["IT", "Design", "QA", "Management"];
+const defaultProfile =
+  "https://cdn-icons-png.flaticon.com/512/9131/9131529.png"; // clean default profile icon
 
 const AddModel = ({ onClose, onAdd }) => {
   const [formData, setFormData] = useState({
-    name: "",
+    first_name: "",
+    last_name: "",
+    profile: "", // image or default
     email: "",
-    profileImage: "",
-    companyName: "",
-    companyDescription: "",
-    companyWebsite: "",
-    industry: "",
+    phone: "",
+    role: "User",
+    category: "IT",
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () =>
+        setFormData({ ...formData, profile: reader.result });
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = () => {
@@ -22,20 +36,106 @@ const AddModel = ({ onClose, onAdd }) => {
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-lg p-6 w-11/12 md:w-1/2 overflow-y-auto max-h-[90vh]">
-        <h2 className="text-xl font-semibold mb-4">Add Employer</h2>
-        <div className="space-y-3">
-          <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} className="w-full border px-3 py-2 rounded-lg"/>
-          <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} className="w-full border px-3 py-2 rounded-lg"/>
-          <input type="text" name="profileImage" placeholder="Profile Image URL" value={formData.profileImage} onChange={handleChange} className="w-full border px-3 py-2 rounded-lg"/>
-          <input type="text" name="companyName" placeholder="Company Name" value={formData.companyName} onChange={handleChange} className="w-full border px-3 py-2 rounded-lg"/>
-          <textarea name="companyDescription" placeholder="Company Description" value={formData.companyDescription} onChange={handleChange} className="w-full border px-3 py-2 rounded-lg"/>
-          <input type="text" name="companyWebsite" placeholder="Company Website" value={formData.companyWebsite} onChange={handleChange} className="w-full border px-3 py-2 rounded-lg"/>
-          <input type="text" name="industry" placeholder="Industry" value={formData.industry} onChange={handleChange} className="w-full border px-3 py-2 rounded-lg"/>
+      <div className="bg-white rounded-xl shadow-lg p-6 w-11/12 md:w-1/2 relative">
+        <h2 className="text-lg font-semibold mb-4 text-gray-800 text-center">
+          Add User
+        </h2>
+
+        {/* Profile Image Section */}
+        <div className="flex justify-center mb-5 relative">
+          <label htmlFor="profile-upload" className="cursor-pointer relative">
+            <img
+              src={formData.profile || defaultProfile}
+              alt="Profile Preview"
+              className="w-32 h-32 object-cover rounded-full border-2 border-gray-300"
+            />
+
+            {/* Camera Icon */}
+            <div className="absolute bottom-0 right-0 bg-gray-500 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold border-2 border-white">
+              <FiCamera size={16} />
+            </div>
+
+            <input
+              id="profile-upload"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="hidden"
+            />
+          </label>
         </div>
+
+        {/* Form Inputs */}
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <input
+            type="text"
+            name="first_name"
+            placeholder="First Name"
+            value={formData.first_name}
+            onChange={handleChange}
+            className="border border-gray-300 px-3 py-2 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+          <input
+            type="text"
+            name="last_name"
+            placeholder="Last Name"
+            value={formData.last_name}
+            onChange={handleChange}
+            className="border border-gray-300 px-3 py-2 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            className="border border-gray-300 px-3 py-2 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+          <input
+            type="text"
+            name="phone"
+            placeholder="Phone"
+            value={formData.phone}
+            onChange={handleChange}
+            className="border border-gray-300 px-3 py-2 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+          <select
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            className="border border-gray-300 px-3 py-2 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          >
+            <option value="User">User</option>
+            <option value="Admin">Admin</option>
+          </select>
+          <select
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            className="border border-gray-300 px-3 py-2 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          >
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Action Buttons */}
         <div className="mt-5 flex justify-end gap-2">
-          <button onClick={onClose} className="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
-          <button onClick={handleSubmit} className="bg-blue-500 px-4 py-2 rounded-lg text-white hover:bg-blue-600">Add</button>
+          <button
+            onClick={onClose}
+            className="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSubmit}
+            className="bg-blue-500 px-4 py-2 rounded-lg text-white hover:bg-blue-600"
+          >
+            Add
+          </button>
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Pagination, Select, MenuItem } from "@mui/material";
 import { FiEye, FiEdit, FiTrash2, FiPlus } from "react-icons/fi";
 import jsPDF from "jspdf";
@@ -11,7 +11,8 @@ import UpdateModel from "../models/employer/updateModel";
 import DeleteModel from "../models/employer/deleteModel";
 
 const EmployerTable = () => {
-  const allEmployers = [
+  // Load from localStorage if exists
+  const storedEmployers = JSON.parse(localStorage.getItem("employers")) || [
     {
       id: 1,
       name: "John Doe",
@@ -44,7 +45,7 @@ const EmployerTable = () => {
     },
   ];
 
-  const [employers, setEmployers] = useState(allEmployers);
+  const [employers, setEmployers] = useState(storedEmployers);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -54,6 +55,10 @@ const EmployerTable = () => {
   const [openView, setOpenView] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem("employers", JSON.stringify(employers));
+  }, [employers]);
 
   const filteredEmployers = employers.filter(
     (e) =>
@@ -124,7 +129,6 @@ const EmployerTable = () => {
         />
 
         <div className="flex items-center space-x-2">
-          {/* Add Employer Button */}
           <button
             onClick={() => setOpenAdd(true)}
             className="flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow"
@@ -132,7 +136,6 @@ const EmployerTable = () => {
             <FiPlus className="mr-2" size={18} /> Add Employer
           </button>
 
-          {/* Export PDF */}
           <button
             onClick={exportPDF}
             className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow"
@@ -140,7 +143,6 @@ const EmployerTable = () => {
             Export PDF
           </button>
 
-          {/* Export CSV */}
           <CSVLink
             data={csvData}
             filename="employers.csv"

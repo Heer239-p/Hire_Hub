@@ -19,7 +19,12 @@ import { fetchJobs } from "../services/jobService";
 import { fetchUsers } from "../services/userService";
 import { fetchApplications } from "../services/applicationServices";
 
-// Custom Tooltip for charts
+// Import all modals
+import AddUserModal from "../models/user/addModel";
+import AddJobModal from "../models/job/addModel";
+import AddApplicationModal from "../models/application/addModel";
+
+// Custom Tooltip
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
@@ -36,7 +41,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-// Separate RecentActivity Component
+// Recent Activity Component
 const RecentActivity = ({ activities }) => (
   <div className="bg-white rounded-2xl shadow-md p-6">
     <h2 className="text-lg font-semibold mb-4 text-gray-900">🕒 Recent Activity</h2>
@@ -63,14 +68,18 @@ const Dashboard = () => {
   const [applicationCount, setApplicationCount] = useState(0);
   const [recentActivities, setRecentActivities] = useState([]);
 
-  // Function to add an activity dynamically
+  // Modal states
+  const [openAddUser, setOpenAddUser] = useState(false);
+  const [openAddJob, setOpenAddJob] = useState(false);
+  const [openAddApplication, setOpenAddApplication] = useState(false);
+
   const addActivity = (action, entity, name) => {
     const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     const message = `${action} ${entity}: ${name}`;
     setRecentActivities((prev) => [{ id: Date.now(), message, time }, ...prev]);
   };
 
-  // Load counts from services
+  // Load counts
   useEffect(() => {
     const loadCounts = async () => {
       try {
@@ -90,30 +99,9 @@ const Dashboard = () => {
   }, []);
 
   const stats = [
-    {
-      label: "Total Jobs",
-      value: jobCount,
-      icon: FiBriefcase,
-      iconColor: "text-blue-500",
-      bgColor: "bg-blue-100",
-      path: "/jobs",
-    },
-    {
-      label: "Registered Users",
-      value: userCount,
-      icon: FiUsers,
-      iconColor: "text-green-500",
-      bgColor: "bg-green-100",
-      path: "/users",
-    },
-    {
-      label: "Applications",
-      value: applicationCount,
-      icon: FiFileText,
-      iconColor: "text-purple-500",
-      bgColor: "bg-purple-100",
-      path: "/applications",
-    },
+    { label: "Total Jobs", value: jobCount, icon: FiBriefcase, bgColor: "bg-blue-100", path: "/jobs" },
+    { label: "Registered Users", value: userCount, icon: FiUsers, bgColor: "bg-green-100", path: "/users" },
+    { label: "Applications", value: applicationCount, icon: FiFileText, bgColor: "bg-purple-100", path: "/applications" },
   ];
 
   const chartData = [
@@ -132,26 +120,18 @@ const Dashboard = () => {
     { name: "Applications", value: applicationCount, color: "#8b5cf6" },
   ];
 
-  // Example CRUD actions (can call addActivity after actual API)
-  const handleAddUser = (name) => {
-    addActivity("Added", "User", name);
-  };
-  const handleAddJob = (title) => {
-    addActivity("Added", "Job", title);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white p-8">
-      {/* Stats Section */}
+      {/* Stats */}
       <section className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-10">
-        {stats.map(({ label, value, icon: Icon, iconColor, bgColor, path }, idx) => (
+        {stats.map(({ label, value, icon: Icon, bgColor, path }, idx) => (
           <div
             key={idx}
             onClick={() => navigate(path)}
             className="flex items-center bg-white rounded-2xl shadow-md p-4 sm:p-5 md:p-6 hover:shadow-lg transition-all cursor-pointer min-h-[100px] sm:min-h-[120px]"
           >
             <div className={`${bgColor} p-3 sm:p-4 rounded-full flex items-center justify-center shrink-0`}>
-              <Icon className={`${iconColor} text-xl sm:text-2xl md:text-3xl`} />
+              <Icon className="text-xl sm:text-2xl md:text-3xl text-gray-700" />
             </div>
             <div className="flex flex-col flex-1 min-w-0 ml-3 sm:ml-4">
               <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">{value}</p>
@@ -161,31 +141,25 @@ const Dashboard = () => {
         ))}
       </section>
 
-      {/* Charts Section */}
+      {/* Charts */}
       <section className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-        {/* Pie Chart */}
         <div className="bg-white rounded-2xl p-6 shadow-md flex flex-col items-center justify-center min-h-[400px]">
           <h2 className="text-lg font-semibold mb-4 text-gray-900">Overall Distribution</h2>
           <PieChart width={200} height={200}>
             <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={4} dataKey="value">
-              {pieData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
+              {pieData.map((entry, index) => <Cell key={index} fill={entry.color} />)}
             </Pie>
           </PieChart>
           <div className="mt-3 space-y-1">
             {pieData.map((entry, idx) => (
               <div key={idx} className="flex items-center space-x-2 text-sm">
                 <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
-                <span className="font-medium text-gray-700">
-                  {entry.name}: {entry.value}
-                </span>
+                <span className="font-medium text-gray-700">{entry.name}: {entry.value}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Bar Chart */}
         <div className="bg-white rounded-2xl p-6 shadow-md min-h-[320px] flex flex-col justify-center">
           <h2 className="text-lg font-semibold mb-4 text-gray-900">Monthly Overview</h2>
           <ResponsiveContainer width="100%" height={220}>
@@ -203,37 +177,24 @@ const Dashboard = () => {
         </div>
       </section>
 
-      {/* Combined Section: Recent Activity + Quick Actions */}
+      {/* Recent Activity + Quick Actions */}
       <section className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
         <RecentActivity activities={recentActivities} />
 
-        {/* Quick Actions */}
         <div className="bg-white rounded-2xl shadow-md p-6">
           <h2 className="text-lg font-semibold mb-4 text-gray-900">👤 Quick Actions</h2>
           <div className="flex flex-col gap-4">
-            <button
-              onClick={() => navigate("/users")}
-              className="flex items-center justify-center gap-2 bg-purple-100 text-purple-700 py-2 rounded-lg hover:bg-purple-200 transition w-full"
-            >
-              <FiUsers /> View Users
-            </button>
-
-            <button
-              onClick={() => navigate("/jobs")}
-              className="flex items-center justify-center gap-2 bg-green-100 text-green-700 py-2 rounded-lg hover:bg-green-200 transition w-full"
-            >
-              <FiBriefcase /> Jobs
-            </button>
-
-            <button
-              onClick={() => navigate("/applications")}
-              className="flex items-center justify-center gap-2 bg-yellow-100 text-yellow-700 py-2 rounded-lg hover:bg-yellow-200 transition w-full"
-            >
-              <FiEye /> Applications
-            </button>
+            <button onClick={() => setOpenAddUser(true)} className="flex items-center justify-center gap-2 bg-purple-100 text-purple-700 py-2 rounded-lg hover:bg-purple-200 transition w-full"><FiUsers /> Add User</button>
+            <button onClick={() => setOpenAddJob(true)} className="flex items-center justify-center gap-2 bg-green-100 text-green-700 py-2 rounded-lg hover:bg-green-200 transition w-full"><FiBriefcase /> Add Job</button>
+            <button onClick={() => setOpenAddApplication(true)} className="flex items-center justify-center gap-2 bg-yellow-100 text-yellow-700 py-2 rounded-lg hover:bg-yellow-200 transition w-full"><FiEye /> Add Application</button>
           </div>
         </div>
       </section>
+
+      {/* Modals */}
+      {openAddUser && <AddUserModal onClose={() => setOpenAddUser(false)} onAdd={(newUser) => { addActivity("Added", "User", `${newUser.first_name} ${newUser.last_name}`); setUserCount(prev => prev + 1); setOpenAddUser(false); }} />}
+      {openAddJob && <AddJobModal onClose={() => setOpenAddJob(false)} onAdd={(newJob) => { addActivity("Added", "Job", newJob.title); setJobCount(prev => prev + 1); setOpenAddJob(false); }} />}
+      {openAddApplication && <AddApplicationModal onClose={() => setOpenAddApplication(false)} onAdd={(newApp) => { addActivity("Added", "Application", newApp.jobTitle); setApplicationCount(prev => prev + 1); setOpenAddApplication(false); }} />}
     </div>
   );
 };
