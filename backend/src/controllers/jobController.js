@@ -2,7 +2,7 @@ import Job from "../models/Job.js";
 import { successResponse, errorResponse } from "../utils/responseHandler.js";
 
 // ==========================
-// CREATE JOB (with optional file upload)
+// CREATE JOB (draft or pending)
 // ==========================
 export const createJob = async (req, res) => {
   try {
@@ -11,7 +11,11 @@ export const createJob = async (req, res) => {
       description,
       company,
       location,
-      salary,
+      salaryType,
+      fixedSalary,
+      salaryFrom,
+      salaryTo,
+      category,
       jobType,
       skills,
       deadline,
@@ -25,26 +29,70 @@ export const createJob = async (req, res) => {
       return errorResponse(res, 400, "Title and Description are required ❌");
     }
 
+    if (!salaryType) {
+      return errorResponse(res, 400, "Salary type (Fixed/Range) is required ❌");
+    }
+
     // Handle uploaded file (if any)
     const jobFile = req.file ? req.file.filename : null;
 
+    // Create job document
     const job = await Job.create({
       title,
       description,
       company: company || "Unknown Company",
       location: location || "Remote",
-      salary: salary || "",
+      salaryType,
+      fixedSalary:
+        salaryType === "Fixed" ? fixedSalary || null : undefined,
+      salaryRange:
+        salaryType === "Range"
+          ? { from: salaryFrom || null, to: salaryTo || null }
+          : undefined,
+      category: category || "Other",
       jobType: jobType || "Full-Time",
       skills: skills ? skills.split(",").map((s) => s.trim()) : [],
       deadline: deadline || null,
       employer: req.user._id,
-      attachment: jobFile || null, // file field in model
+      attachment: jobFile || null,
+      status: "Pending", // job stays pending until payment
     });
 
     return successResponse(res, 201, "Job created successfully ✅", job);
   } catch (error) {
     console.error("Error creating job:", error);
     return errorResponse(res, 500, "Server error while creating job ⚠️", {
+      details: error.message,
+    });
+  }
+};
+
+// ==========================
+// MARK JOB AS POSTED (after payment success)
+// ==========================
+export const markJobAsPosted = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+
+    const job = await Job.findById(jobId);
+    if (!job) return errorResponse(res, 404, "Job not found ❌");
+
+    // Permission check
+    if (
+      req.user.role !== "admin" &&
+      job.employer.toString() !== req.user._id.toString()
+    ) {
+      return errorResponse(res, 403, "Access denied ❌");
+    }
+
+    // Update job status to Active (posted)
+    job.status = "Active";
+    await job.save();
+
+    return successResponse(res, 200, "Job marked as Posted successfully ✅", job);
+  } catch (error) {
+    console.error("Error marking job as posted:", error);
+    return errorResponse(res, 500, "Server error while posting job ⚠️", {
       details: error.message,
     });
   }
@@ -61,6 +109,8 @@ export const getAllJobs = async (req, res) => {
     if (req.query.jobType) filter.jobType = req.query.jobType;
     if (req.query.company) filter.company = req.query.company;
     if (req.query.skill) filter.skills = { $in: [req.query.skill] };
+    if (req.query.category) filter.category = req.query.category;
+    if (req.query.status) filter.status = req.query.status;
 
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
@@ -111,25 +161,40 @@ export const updateJob = async (req, res) => {
       description,
       company,
       location,
-      salary,
+      salaryType,
+      fixedSalary,
+      salaryFrom,
+      salaryTo,
+      category,
       jobType,
       skills,
       deadline,
     } = req.body;
 
-    // Update fields
     job.title = title || job.title;
     job.description = description || job.description;
     job.company = company || job.company;
     job.location = location || job.location;
-    job.salary = salary || job.salary;
+    job.salaryType = salaryType || job.salaryType;
+
+    if (salaryType === "Fixed") {
+      job.fixedSalary = fixedSalary || job.fixedSalary;
+      job.salaryRange = undefined;
+    } else if (salaryType === "Range") {
+      job.salaryRange = {
+        from: salaryFrom || job.salaryRange?.from,
+        to: salaryTo || job.salaryRange?.to,
+      };
+      job.fixedSalary = undefined;
+    }
+
+    job.category = category || job.category;
     job.jobType = jobType || job.jobType;
     job.skills = skills
       ? skills.split(",").map((s) => s.trim())
       : job.skills;
     job.deadline = deadline || job.deadline;
 
-    // Update file if provided
     if (req.file) {
       job.attachment = req.file.filename;
     }
@@ -173,7 +238,6 @@ export const deleteJob = async (req, res) => {
   }
 };
 
-
 // ==========================
 // GET MY JOBS (for logged-in employer)
 // ==========================
@@ -183,7 +247,6 @@ export const getMyJobs = async (req, res) => {
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    // Fetch only jobs created by the logged-in user
     const jobs = await Job.find({ employer: req.user._id })
       .sort({ createdAt: -1 })
       .skip(skip)
