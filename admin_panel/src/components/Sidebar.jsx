@@ -127,7 +127,7 @@ const Sidebar = ({ collapsed }) => {
               Hire<span className="text-blue-500">Hub</span>
             </h1>
           ) : (
-            <span className="text-2xl text-white font-bold mx-auto">H</span>
+            <span className="text-2xl text-white font-bold mx-auto"></span>
           )}
         </div>
 

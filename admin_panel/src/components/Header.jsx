@@ -102,7 +102,7 @@ const Header = ({ onToggleSidebar }) => {
 
         {/* Admin Profile Image */}
         <img
-  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZF9y9Tee8pOYRIavNbJ3Zmsd1v0_Lz1uIvA&s"
+  src="https://www.pngmart.com/files/21/Admin-Profile-Vector-PNG-Clipart.png"
   alt="Admin Profile"
   onClick={() => navigate("/profile")}
   className="w-10 h-10 rounded-full object-cover cursor-pointer transition-transform duration-200 hover:scale-105"
