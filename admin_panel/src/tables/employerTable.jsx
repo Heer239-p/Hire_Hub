@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { Pagination, Select, MenuItem } from "@mui/material";
-import { FiEye, FiEdit, FiTrash2 } from "react-icons/fi";
+import { FiEye, FiEdit, FiTrash2, FiPlus } from "react-icons/fi";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { CSVLink } from "react-csv";
+
+import AddModel from "../models/employer/addModel";
+import ViewModel from "../models/employer/viewModel";
+import UpdateModel from "../models/employer/updateModel";
+import DeleteModel from "../models/employer/deleteModel";
 
 const EmployerTable = () => {
   const allEmployers = [
@@ -43,6 +48,12 @@ const EmployerTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [selectedEmployer, setSelectedEmployer] = useState(null);
+
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openView, setOpenView] = useState(false);
+  const [openUpdate, setOpenUpdate] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
 
   const filteredEmployers = employers.filter(
     (e) =>
@@ -58,7 +69,6 @@ const EmployerTable = () => {
     page * rowsPerPage
   );
 
-  // Export PDF
   const exportPDF = () => {
     const doc = new jsPDF();
     autoTable(doc, {
@@ -75,7 +85,6 @@ const EmployerTable = () => {
     doc.save("employers.pdf");
   };
 
-  // CSV data
   const csvData = filteredEmployers.map((e) => ({
     Name: e.name,
     Email: e.email,
@@ -85,11 +94,26 @@ const EmployerTable = () => {
     Industry: e.industry,
   }));
 
+  // CRUD Handlers
+  const handleAddEmployer = (newEmployer) => {
+    setEmployers([...employers, { id: Date.now(), ...newEmployer }]);
+  };
+
+  const handleUpdateEmployer = (updatedEmployer) => {
+    setEmployers(
+      employers.map((e) => (e.id === updatedEmployer.id ? updatedEmployer : e))
+    );
+  };
+
+  const handleDeleteEmployer = (id) => {
+    setEmployers(employers.filter((e) => e.id !== id));
+  };
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <h1 className="text-3xl font-semibold mb-6 text-gray-800">Manage Employers</h1>
 
-      {/* Search & Export */}
+      {/* Search & Actions */}
       <div className="flex items-center justify-between mb-5">
         <input
           type="text"
@@ -98,13 +122,25 @@ const EmployerTable = () => {
           onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
           className="border border-gray-300 rounded-lg px-4 py-2 w-1/3 focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
-        <div className="space-x-2">
+
+        <div className="flex items-center space-x-2">
+          {/* Add Employer Button */}
+          <button
+            onClick={() => setOpenAdd(true)}
+            className="flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow"
+          >
+            <FiPlus className="mr-2" size={18} /> Add Employer
+          </button>
+
+          {/* Export PDF */}
           <button
             onClick={exportPDF}
             className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow"
           >
             Export PDF
           </button>
+
+          {/* Export CSV */}
           <CSVLink
             data={csvData}
             filename="employers.csv"
@@ -145,13 +181,13 @@ const EmployerTable = () => {
                   </td>
                   <td className="p-3">{e.industry}</td>
                   <td className="p-3 flex items-center space-x-3">
-                    <button className="text-blue-500 hover:text-blue-700" title="View Employer">
+                    <button className="text-blue-500 hover:text-blue-700" onClick={() => { setSelectedEmployer(e); setOpenView(true); }}>
                       <FiEye size={18} />
                     </button>
-                    <button className="text-green-500 hover:text-green-700" title="Edit Employer">
+                    <button className="text-green-500 hover:text-green-700" onClick={() => { setSelectedEmployer(e); setOpenUpdate(true); }}>
                       <FiEdit size={18} />
                     </button>
-                    <button className="text-red-500 hover:text-red-700" title="Delete Employer">
+                    <button className="text-red-500 hover:text-red-700" onClick={() => { setSelectedEmployer(e); setOpenDelete(true); }}>
                       <FiTrash2 size={18} />
                     </button>
                   </td>
@@ -198,6 +234,12 @@ const EmployerTable = () => {
           boundaryCount={0}
         />
       </div>
+
+      {/* Modals */}
+      {openAdd && <AddModel onClose={() => setOpenAdd(false)} onAdd={handleAddEmployer} />}
+      {openView && <ViewModel employer={selectedEmployer} onClose={() => setOpenView(false)} />}
+      {openUpdate && <UpdateModel employer={selectedEmployer} onClose={() => setOpenUpdate(false)} onUpdate={handleUpdateEmployer} />}
+      {openDelete && <DeleteModel employer={selectedEmployer} onClose={() => setOpenDelete(false)} onDelete={handleDeleteEmployer} />}
     </div>
   );
 };
