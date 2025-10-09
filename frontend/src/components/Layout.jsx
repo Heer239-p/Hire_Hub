@@ -11,9 +11,10 @@ const Layout = () => {
       <Hero />  {/* Hero now visible on all pages */}
       
       {/* Main content between Hero and Footer */}
-      <main className="flex-1 mt-10 mb-15 px-6 md:px-20 max-w-8xl mx-auto w-full">
-        <Outlet />  {/* Renders the current route page */}
-      </main>
+     <main className="flex-1 mt-2 mb-8 px-6 md:px-15 max-w-8xl mx-auto w-full">
+  <Outlet />  {/* Renders the current route page */}
+</main>
+
 
       <Footer />
     </div>

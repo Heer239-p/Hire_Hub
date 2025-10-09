@@ -82,6 +82,22 @@ const Contact = () => {
             ></textarea>
           </div>
 
+          {/* Review Field */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Your Rating</label>
+            <select
+              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              required
+            >
+              <option value="" disabled selected>Select rating</option>
+              <option value="5">★★★★★ - Excellent</option>
+              <option value="4">★★★★ - Very Good</option>
+              <option value="3">★★★ - Good</option>
+              <option value="2">★★ - Fair</option>
+              <option value="1">★ - Poor</option>
+            </select>
+          </div>
+
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-200"

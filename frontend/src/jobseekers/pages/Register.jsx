@@ -1,7 +1,12 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { registerUser } from "../../api/authApi";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const Signup = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     role: "user",
     firstName: "",
@@ -10,17 +15,16 @@ const Signup = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    profileImage: null, // New field
+    profileImage: null,
   });
-
   const [preview, setPreview] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Handle input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle image upload
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -29,31 +33,57 @@ const Signup = () => {
     }
   };
 
-  // Submit
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-    console.log("Form Data:", formData);
+
+    // Password match validation
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    // Mobile validation
+    if (!/^\d{10}$/.test(formData.mobile)) {
+      toast.error("Mobile number must be exactly 10 digits");
+      return;
+    }
+
+    // Password length validation
+    if (formData.password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+
+    try {
+      const payload = new FormData();
+      Object.keys(formData).forEach((key) => {
+        if (formData[key]) payload.append(key, formData[key]);
+      });
+
+      const { data } = await registerUser(payload);
+      localStorage.setItem("userInfo", JSON.stringify(data));
+      toast.success("Registration successful!");
+      navigate("/login");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Signup failed");
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 via-indigo-100 to-blue-50 p-6">
+    <section className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 via-indigo-100 to-blue-50 p-6">
+      <ToastContainer />
       <div className="bg-white rounded-3xl shadow-2xl p-10 w-full max-w-4xl border border-gray-100">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-black-600">Create Account</h1>
-          <p className="text-gray-500 mt-2">
-            Join HireHub and start your career journey
-          </p>
+          <p className="text-gray-500 mt-2">Join HireHub and start your career journey</p>
         </div>
 
         <form onSubmit={handleSignup} className="space-y-6">
-          {/* Profile Image Upload */}
+          {/* Profile Image */}
           <div className="flex flex-col items-center">
             <div className="relative">
               <img
-                src={
-                  preview ||
-                  "https://cdn-icons-png.flaticon.com/512/847/847969.png"
-                }
+                src={preview || "https://cdn-icons-png.flaticon.com/512/847/847969.png"}
                 alt="Profile Preview"
                 className="w-24 h-24 rounded-full object-cover border-4 border-blue-400 shadow-md"
               />
@@ -61,14 +91,7 @@ const Signup = () => {
                 htmlFor="profileImage"
                 className="absolute bottom-0 right-0 bg-blue-600 text-white p-1 rounded-full cursor-pointer hover:bg-blue-700"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V7.414A2 2 0 0017.414 6L14 2.586A2 2 0 0012.586 2H4zm7 5a3 3 0 110 6 3 3 0 010-6z" />
-                </svg>
+                Upload
               </label>
               <input
                 type="file"
@@ -79,125 +102,102 @@ const Signup = () => {
                 onChange={handleImageChange}
               />
             </div>
-            <p className="text-sm text-gray-500 mt-2">
-              Upload your profile picture
-            </p>
+            <p className="text-sm text-gray-500 mt-2">Upload your profile picture</p>
           </div>
 
-          {/* Role Selection */}
+          {/* Role */}
           <div>
-            <label className="block text-gray-700 mb-2 font-medium">
-              Select Role
-            </label>
+            <label className="block text-gray-700 mb-2 font-medium">Select Role</label>
             <select
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
             >
               <option value="user">User</option>
               <option value="employer">Employer</option>
             </select>
           </div>
 
-          {/* Name Fields */}
+          {/* Name, Email, Mobile */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-gray-700 mb-2 font-medium">
-                First Name
-              </label>
-              <input
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                placeholder="First Name"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 mb-2 font-medium">
-                Last Name
-              </label>
-              <input
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                placeholder="Last Name"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                required
-              />
-            </div>
+            <input
+              type="text"
+              name="firstName"
+              placeholder="First Name"
+              value={formData.firstName}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-400"
+              required
+            />
+            <input
+              type="text"
+              name="lastName"
+              placeholder="Last Name"
+              value={formData.lastName}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-400"
+              required
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-400"
+              required
+            />
+            <input
+              type="tel"
+              name="mobile"
+              placeholder="Mobile"
+              value={formData.mobile}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-400"
+              required
+            />
           </div>
 
-          {/* Email & Mobile Fields */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-gray-700 mb-2 font-medium">
-                Email
-              </label>
+          {/* Password */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
+            <div className="relative">
               <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="you@example.com"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 mb-2 font-medium">
-                Mobile Number
-              </label>
-              <input
-                type="tel"
-                name="mobile"
-                value={formData.mobile}
-                onChange={handleChange}
-                placeholder="Enter your mobile number"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                required
-              />
-            </div>
-          </div>
-
-          {/* Password Fields */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-gray-700 mb-2 font-medium">
-                Password
-              </label>
-              <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
+                placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="Enter password"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-400"
                 required
               />
+              <span
+                className="absolute right-3 top-3 cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FiEyeOff /> : <FiEye />}
+              </span>
             </div>
-            <div>
-              <label className="block text-gray-700 mb-2 font-medium">
-                Confirm Password
-              </label>
+
+            <div className="relative">
               <input
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
+                placeholder="Confirm Password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                placeholder="Confirm password"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-400"
                 required
               />
+              <span
+                className="absolute right-3 top-3 cursor-pointer"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+              </span>
             </div>
           </div>
 
-          {/* Signup Button */}
           <button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition-all duration-200 shadow-md"
@@ -205,47 +205,8 @@ const Signup = () => {
             Sign Up
           </button>
         </form>
-
-        {/* OR Divider */}
-        <div className="flex items-center justify-center my-6">
-          <div className="h-px bg-gray-300 w-1/3"></div>
-          <span className="mx-3 text-gray-500 text-sm">OR</span>
-          <div className="h-px bg-gray-300 w-1/3"></div>
-        </div>
-
-        {/* Social Login */}
-        <div className="flex justify-center gap-4">
-          <button className="flex items-center gap-2 border border-gray-300 py-2 px-4 rounded-xl hover:bg-gray-100 transition">
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png"
-              alt="Google"
-              className="w-5 h-5"
-            />
-            <span className="text-sm font-medium text-gray-700">Google</span>
-          </button>
-
-          <button className="flex items-center gap-2 border border-gray-300 py-2 px-4 rounded-xl hover:bg-gray-100 transition">
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/174/174857.png"
-              alt="LinkedIn"
-              className="w-5 h-5"
-            />
-            <span className="text-sm font-medium text-gray-700">LinkedIn</span>
-          </button>
-        </div>
-
-        {/* Login Redirect */}
-        <div className="mt-6 text-center text-gray-600 text-sm">
-          Already have an account?{" "}
-          <Link
-            to="/login"
-            className="text-blue-600 hover:underline font-medium"
-          >
-            Login
-          </Link>
-        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

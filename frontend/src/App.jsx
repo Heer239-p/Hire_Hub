@@ -1,16 +1,8 @@
-// src/App.jsx
 import React from "react";
-import Layout from "./components/Layout";
-import Home from "./jobseekers/pages/Home";
-import "./index"
+import AppRoutes from "./routes";
+
 const App = () => {
-  // Default landing page content
-  return (
-    <Layout>
-      <Home/>
-    
-    </Layout>
-  );
+  return <AppRoutes />;
 };
 
 export default App;
