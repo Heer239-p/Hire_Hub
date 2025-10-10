@@ -77,8 +77,8 @@ const Header = () => {
           <Link className="hover:text-blue-400 transition" to="/">Home</Link>
           <Link className="hover:text-blue-400 transition" to="/jobs">Jobs</Link>
           <Link className="hover:text-blue-400 transition" to="/candidates">Candidates</Link>
-          <Link className="hover:text-blue-400 transition" to="/employers">Employers</Link>
-          <Link className="hover:text-blue-400 transition" to="/contact">Contact</Link>
+          <Link className="hover:text-blue-400 transition" to="/userapplications">My Application</Link>
+          <Link className="hover:text-blue-400 transition" to="/contact">Get in Touch & Review</Link>
         </nav>
 
         {/* Auth Buttons */}

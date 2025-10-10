@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../api/authApi";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FiEye, FiEyeOff } from "react-icons/fi";
+import { FiEye, FiEyeOff ,FiCamera } from "react-icons/fi";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -87,12 +87,13 @@ const Signup = () => {
                 alt="Profile Preview"
                 className="w-24 h-24 rounded-full object-cover border-4 border-blue-400 shadow-md"
               />
-              <label
-                htmlFor="profileImage"
-                className="absolute bottom-0 right-0 bg-blue-600 text-white p-1 rounded-full cursor-pointer hover:bg-blue-700"
-              >
-                Upload
-              </label>
+              
+<label
+  htmlFor="profileImage"
+  className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:bg-blue-700 flex items-center justify-center"
+>
+  <FiCamera className="w-5 h-5" />
+</label>
               <input
                 type="file"
                 id="profileImage"

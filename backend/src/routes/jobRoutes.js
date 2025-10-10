@@ -1,6 +1,6 @@
 import express from "express";
 import { createJob, getAllJobs, updateJob, deleteJob, getMyJobs } from "../controllers/jobController.js";
-import { getMyJobApplications, updateApplicationStatus,getMyApplications,withdrawApplication } from "../controllers/applicationController.js";
+import { getMyJobApplications, updateApplicationStatus,withdrawApplication } from "../controllers/applicationController.js";
 import { protect, authorizeRoles } from "../middlewares/authMiddleware.js";
 import { upload } from "../middlewares/uploadMiddleware.js";
 
@@ -13,7 +13,7 @@ router.post("/:id", protect, authorizeRoles("employer", "admin"), upload.single(
 router.post("/:id", protect, authorizeRoles("employer", "admin"), deleteJob);
 router.post("/applications", protect, authorizeRoles("employer", "admin"), getMyJobApplications);
 router.post("/applications/:id/status", protect, authorizeRoles("admin", "employer"), updateApplicationStatus);
-router.post("/my-applications", protect, getMyApplications);
+
 
 router.post("/:id/withdraw", protect, withdrawApplication);
 

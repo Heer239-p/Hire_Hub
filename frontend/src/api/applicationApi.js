@@ -1,27 +1,37 @@
 import axios from "axios";
 
-// Fetch all applications for the logged-in user
+// Create axios instance with base URL
+const api = axios.create({
+  baseURL: "http://localhost:5000/api", // backend base URL
+});
+
+// Fetch all applications for logged-in user
 export const getMyApplications = async () => {
-  const token = localStorage.getItem("token"); // JWT token
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const token = userInfo?.token;
+  if (!token) throw new Error("No token found, login required");
+
   const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   };
 
-  const { data } = await axios.post("/api/applications/my-applications", {}, config);
-  return data.data; // returns applications array
+  const { data } = await api.post("/user/my-applications", {}, config);
+  return data.result; // backend sends applications under "result"
 };
 
-// Withdraw application
 export const withdrawApplication = async (applicationId) => {
-  const token = localStorage.getItem("token");
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const token = userInfo?.token;
+  if (!token) throw new Error("No token found, login required");
+
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
 
-  const { data } = await axios.post(`/api/applications/${applicationId}/withdraw`, {}, config);
+  // Match your backend route
+  const { data } = await api.post(`/jobs/${applicationId}/withdraw`, {}, config);
   return data;
 };
+

@@ -12,7 +12,8 @@ import Register from "./jobseekers/pages/Register";
 import Categories from "./jobseekers/pages/ExploreCategories";
 import ProtectedRoute from "./components/ProtectedRoute";
 import BrowseJobs from "./jobseekers/pages/BrowseJobs";
-
+import application from "./jobseekers/pages/UserApplications";
+import UserApplications from "./jobseekers/pages/UserApplications";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -35,10 +36,10 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path="employers"
+          path="userapplications"
           element={
             <ProtectedRoute>
-              <Employers />
+              <UserApplications />
             </ProtectedRoute>
           }
         />

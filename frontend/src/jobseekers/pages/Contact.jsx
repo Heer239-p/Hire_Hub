@@ -1,9 +1,49 @@
-import React from "react";
+import React, { useState } from "react";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+    rating: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!formData.name || !formData.email || !formData.message || !formData.rating) {
+      toast.error("Please fill all fields!");
+      return;
+    }
+
+    // Get existing reviews from localStorage
+    const existingReviews = JSON.parse(localStorage.getItem("userReviews")) || [];
+
+    // Add new review
+    const newReview = {
+      name: formData.name,
+      role: "User", // you can make dynamic if needed
+      rating: parseInt(formData.rating),
+      comment: formData.message,
+    };
+
+    localStorage.setItem("userReviews", JSON.stringify([...existingReviews, newReview]));
+    toast.success("Your review has been submitted!");
+
+    // Reset form
+    setFormData({ name: "", email: "", message: "", rating: "" });
+  };
+
   return (
     <section className="bg-gray-50 py-20 px-6 md:px-0 flex justify-center items-center">
+      <ToastContainer />
       <div className="max-w-4xl w-full bg-white rounded-2xl shadow-lg border border-gray-100 p-10">
         {/* Heading */}
         <div className="text-center mb-10">
@@ -49,12 +89,15 @@ const Contact = () => {
         </div>
 
         {/* Form Section */}
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-gray-700 font-medium mb-2">Full Name</label>
               <input
                 type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
                 placeholder="Your name"
                 className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none"
                 required
@@ -65,6 +108,9 @@ const Contact = () => {
               <label className="block text-gray-700 font-medium mb-2">Email Address</label>
               <input
                 type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 placeholder="your@email.com"
                 className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none"
                 required
@@ -75,21 +121,26 @@ const Contact = () => {
           <div>
             <label className="block text-gray-700 font-medium mb-2">Message</label>
             <textarea
+              name="message"
               rows="5"
+              value={formData.message}
+              onChange={handleChange}
               placeholder="Write your message..."
               className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none"
               required
             ></textarea>
           </div>
 
-          {/* Review Field */}
           <div>
             <label className="block text-gray-700 font-medium mb-2">Your Rating</label>
             <select
+              name="rating"
+              value={formData.rating}
+              onChange={handleChange}
               className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none"
               required
             >
-              <option value="" disabled selected>Select rating</option>
+              <option value="" disabled>Select rating</option>
               <option value="5">★★★★★ - Excellent</option>
               <option value="4">★★★★ - Very Good</option>
               <option value="3">★★★ - Good</option>
