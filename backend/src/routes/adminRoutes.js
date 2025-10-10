@@ -13,9 +13,9 @@ import {
 const router = express.Router();
 
 
-router.post("/users", protect, authorizeRoles("admin"), getAllUsers);
+router.post("/users", protect, authorizeRoles("admin","user"), getAllUsers);
 
-router.post("/users/get/:id", protect, authorizeRoles("admin"), getUserById);
+router.post("/users/get/:id", protect, authorizeRoles("admin","user"), getUserById);
 
 router.post("/users/update/:id", protect, authorizeRoles("admin"), updateUser);
 

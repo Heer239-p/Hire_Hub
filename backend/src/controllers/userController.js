@@ -134,3 +134,20 @@ export const applyJob = async (req, res) => {
     });
   }
 };
+
+
+
+// ==========================
+// GET ONLY CANDIDATES (role=user)
+// ==========================
+export const getOnlyUsers = async (req, res) => {
+  try {
+    // Fetch only users with role="user", exclude password
+    const users = await User.find({ role: "user" }).select("-password");
+    res.status(200).json({ status: "success", statusCode: 200, data: users });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: "error", statusCode: 500, message: error.message });
+  }
+};
+

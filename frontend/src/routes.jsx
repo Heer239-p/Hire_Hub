@@ -11,6 +11,7 @@ import Login from "./jobseekers/pages/Login";
 import Register from "./jobseekers/pages/Register";
 import Categories from "./jobseekers/pages/ExploreCategories";
 import ProtectedRoute from "./components/ProtectedRoute";
+import BrowseJobs from "./jobseekers/pages/BrowseJobs";
 
 const AppRoutes = () => {
   return (
@@ -45,6 +46,8 @@ const AppRoutes = () => {
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Register />} />
         <Route path="categories" element={<Categories />} />
+        <Route path="browse-jobs" element={<BrowseJobs />} />
+
       </Route>
     </Routes>
   );

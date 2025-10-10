@@ -21,3 +21,11 @@ export const loginUser = async (formData) => {
   const { data } = await api.post("/login", formData);
   return data;
 };
+// ==========================
+// LOGOUT USER
+// ==========================
+export const logoutUser = async (token) => {
+  const config = { headers: { Authorization: `Bearer ${token}` } };
+  const { data } = await api.post("/logout", {}, config);
+  return data;
+};

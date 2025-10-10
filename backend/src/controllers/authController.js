@@ -110,3 +110,20 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ message: "Login failed", error });
   }
 };
+
+
+// ==========================
+// LOGOUT USER
+// ==========================
+export const logoutUser = async (req, res) => {
+  try {
+    // On client-side, token will be removed from localStorage/cookies.
+    // If you’re using cookies for auth, you can clear it here.
+    res.clearCookie("token", { httpOnly: true, secure: true, sameSite: "none" });
+    res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Logout failed", error });
+  }
+};
+
