@@ -26,9 +26,11 @@ const Header = ({ onToggleSidebar }) => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
       localStorage.setItem("theme", "dark");
+      console.log("🌙 Dark mode ON - HTML classes:", document.documentElement.className);
     } else {
       document.documentElement.classList.remove("dark");
       localStorage.setItem("theme", "light");
+      console.log("☀️ Light mode ON - HTML classes:", document.documentElement.className);
     }
   }, [darkMode]);
 

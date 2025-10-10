@@ -10,7 +10,9 @@ import PrivateRoute from '../components/PrivateRoute';
 import AdminLayout from '../layouts/AdminLayout';  // <-- import layout here
 import { isAuthenticated } from '../utils/auth';
 import Employers from '../pages/employers';
-import Profile from "../pages/Profile";
+import Profile from "../pages/profile";
+import Category from "../pages/categories"; 
+import Categories from '../pages/categories';
 
 
 const AppRoutes = () => {
@@ -93,6 +95,18 @@ const AppRoutes = () => {
     <PrivateRoute>
       <AdminLayout>
         <Profile />
+      </AdminLayout>
+    </PrivateRoute>
+  }
+/>
+
+
+   <Route
+  path="/categories"
+  element={
+    <PrivateRoute>
+      <AdminLayout>
+        <Categories />
       </AdminLayout>
     </PrivateRoute>
   }

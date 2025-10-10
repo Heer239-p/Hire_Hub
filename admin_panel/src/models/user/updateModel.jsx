@@ -37,7 +37,7 @@ const UpdateModel = ({ user, onClose, onUpdate }) => {
   if (!user) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center bg-white/40 backdrop-blur-sm z-50">
       <div className="bg-white rounded-xl shadow-lg p-6 w-11/12 md:w-1/2 relative">
         <h2 className="text-lg font-semibold mb-4 text-center">Update User</h2>
 

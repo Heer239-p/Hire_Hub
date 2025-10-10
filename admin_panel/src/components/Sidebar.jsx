@@ -84,17 +84,19 @@
 
 
 import React from 'react';
-import { FiHome, FiBriefcase, FiUsers, FiFileText, FiArchive, FiUserPlus, FiLogOut } from 'react-icons/fi';
+import { FiHome, FiBriefcase, FiUsers, FiFileText, FiArchive, FiUserPlus, FiLogOut,FiTag  } from 'react-icons/fi';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { logout } from '../utils/auth';
 
 const navItems = [
   { label: 'Dashboard', path: '/', icon: FiHome },
-  { label: 'Jobs', path: '/jobs', icon: FiBriefcase },
   { label: 'Users', path: '/users', icon: FiUsers },
-  { label: 'Applications', path: '/applications', icon: FiFileText },
   { label: 'Companies', path: '/companies', icon: FiArchive },
-  { label: "Employers", path: "/employers", icon: FiUserPlus }, // New item
+  { label: 'Jobs', path: '/jobs', icon: FiBriefcase },
+    { label: "Employers", path: "/employers", icon: FiUserPlus },
+  { label: 'Applications', path: '/applications', icon: FiFileText },
+  { label: 'Categories', path: '/categories', icon: FiTag  },
+
 ];
 
 const Sidebar = ({ collapsed }) => {
@@ -109,11 +111,11 @@ const Sidebar = ({ collapsed }) => {
   return (
     <div
       className={`${collapsed ? 'w-16' : 'w-64'
-        } h-screen flex flex-col justify-between bg-black-900 text-gray-700 transition-all duration-300`}
+        } h-screen flex flex-col justify-between bg-gray-900 dark:bg-black text-gray-700 dark:text-gray-300 transition-all duration-300`}
     >
       {/* Top - Logo and Nav */}
       <div>
-        <div className="h-16 w-full flex items-center relative px-2">
+        <div className="h-16 w-full flex items-center relative px-2 dark:border-b dark:border-gray-800">
           {/* Logo on the left corner */}
           <img
             src='https://xpertlab.com/wp-content/uploads/2023/05/Hire-Hub.jpg'
@@ -123,11 +125,11 @@ const Sidebar = ({ collapsed }) => {
 
           {/* Centered title */}
           {!collapsed ? (
-            <h1 className="text-2xl text-white font-bold tracking-wide mx-auto">
-              Hire<span className="text-blue-500">Hub</span>
+            <h1 className="text-2xl text-white dark:text-gray-100 font-bold tracking-wide mx-auto">
+              Hire<span className="text-blue-500 dark:text-blue-400">Hub</span>
             </h1>
           ) : (
-            <span className="text-2xl text-white font-bold mx-auto"></span>
+            <span className="text-2xl text-white dark:text-gray-100 font-bold mx-auto"></span>
           )}
         </div>
 
@@ -140,9 +142,9 @@ const Sidebar = ({ collapsed }) => {
               <Link
                 key={path}
                 to={path}
-                className={`flex items-center gap-4 p-2 rounded-md transition-all text-white ${isActive
-                    ? 'bg-blue-600 text-white'
-                    : 'hover:bg-blue-600 hover:text-white'
+                className={`flex items-center gap-4 p-2 rounded-md transition-all text-white dark:text-gray-300 ${isActive
+                    ? 'bg-blue-600 dark:bg-blue-700 text-white'
+                    : 'hover:bg-blue-600 dark:hover:bg-blue-700 hover:text-white'
                   }`}
               >
                 <Icon className="text-xl" />
@@ -154,9 +156,9 @@ const Sidebar = ({ collapsed }) => {
       </div>
 
       {/* Bottom - Logout */}
-      <div className="p-4">
+      <div className="p-4 dark:border-t dark:border-gray-800">
         <button
-          className="flex items-center gap-4 w-full p-2 rounded-md hover:bg-red-600 hover:text-white transition-colors text-white"
+          className="flex items-center gap-4 w-full p-2 rounded-md hover:bg-red-600 dark:hover:bg-red-700 hover:text-white transition-colors text-white dark:text-gray-300"
           onClick={handleLogout}
         >
           <FiLogOut className="text-xl" />

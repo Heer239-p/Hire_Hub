@@ -35,9 +35,9 @@ const AddModel = ({ onClose, onAdd }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-lg p-6 w-11/12 md:w-1/2 relative">
-        <h2 className="text-lg font-semibold mb-4 text-gray-800 text-center">
+     <div className="fixed inset-0 flex items-center justify-center bg-white/40 backdrop-blur-sm z-50">
+      <div className="bg-white rounded-2xl p-10 w-full max-w-2xl shadow-xl relative border border-gray-100">
+       <h2 className="text-lg font-semibold mb-4 text-gray-800 text-center">
           Add User
         </h2>
 
