@@ -42,8 +42,8 @@ const UpdateModel = ({ employer, onClose, onUpdate }) => {
   if (!employer) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl shadow-lg p-8 w-11/12 md:w-2/3 max-w-2xl border border-gray-200 relative">
+     <div className="fixed inset-0 flex items-center justify-center bg-white/40 backdrop-blur-sm z-50">
+      <div className="bg-white rounded-2xl p-10 w-full max-w-2xl shadow-xl relative border border-gray-100">
         <h2 className="text-2xl font-semibold mb-6 text-center text-gray-800">
           Update Employer
         </h2>

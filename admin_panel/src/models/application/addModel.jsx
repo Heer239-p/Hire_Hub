@@ -12,15 +12,20 @@ const AddModel = ({ onClose, onAdd }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {
-    onAdd(formData);
-    onClose();
+  const handleSubmit = async () => {
+    // Basic validation
+    if (!formData.jobTitle || !formData.applicant || !formData.email) {
+      alert("Please fill in all required fields");
+      return;
+    }
+    
+    await onAdd(formData);
   };
 
   return (
-    <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-lg p-5 w-11/12 md:w-1/3 border border-gray-300">
-        <h2 className="text-lg font-semibold mb-4 text-gray-800">Add Application</h2>
+    <div className="fixed inset-0 flex items-center justify-center bg-white/40 backdrop-blur-sm z-50">
+      <div className="bg-white rounded-2xl p-10 w-full max-w-2xl shadow-xl relative border border-gray-100">
+         <h2 className="text-lg font-semibold mb-4 text-gray-800">Add Application</h2>
         <div className="space-y-3">
           <input
             type="text"

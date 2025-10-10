@@ -122,8 +122,8 @@ const JobTable = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-semibold mb-6 text-gray-800">Manage Jobs</h1>
+    <div className="p-6 bg-gray-50 dark:bg-gray-950 min-h-screen transition-colors duration-300">
+      <h1 className="text-3xl font-semibold mb-6 text-gray-800 dark:text-gray-100">Manage Jobs</h1>
 
       {/* Search & Actions */}
       <div className="flex items-center justify-between mb-5">
@@ -132,20 +132,20 @@ const JobTable = () => {
           placeholder="Search jobs..."
           value={searchTerm}
           onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
-          className="border border-gray-300 rounded-lg px-4 py-2 w-1/3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 w-1/3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
 
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setOpenAdd(true)}
-            className="flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow"
+            className="flex items-center bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow"
           >
             <FiPlus className="mr-2" size={18} /> Add Job
           </button>
 
           <button
             onClick={exportPDF}
-            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow"
+            className="bg-green-500 dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow"
           >
             Export PDF
           </button>
@@ -153,7 +153,7 @@ const JobTable = () => {
           <CSVLink
             data={csvData}
             filename="jobs.csv"
-            className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg shadow"
+            className="bg-yellow-500 dark:bg-yellow-600 hover:bg-yellow-600 dark:hover:bg-yellow-700 text-white px-4 py-2 rounded-lg shadow"
           >
             Export CSV
           </CSVLink>
@@ -161,9 +161,9 @@ const JobTable = () => {
       </div>
 
       {/* Job Table */}
-      <div className="overflow-x-auto rounded-lg shadow">
-        <table className="w-full bg-white text-sm border-t border-gray-300 border-collapse">
-          <thead className="bg-blue-500 text-white uppercase text-sm">
+      <div className="overflow-x-auto rounded-lg shadow dark:shadow-gray-900">
+        <table className="w-full bg-white dark:bg-gray-800 text-sm border-t border-gray-300 dark:border-gray-700 border-collapse">
+          <thead className="bg-blue-500 dark:bg-blue-700 text-white uppercase text-sm">
             <tr>
               {["Title","Company","Category","Location","Type","Posted","Expiry","Apps","Status","Actions"].map((head) => (
                 <th key={head} className="p-3 text-left font-semibold">{head}</th>
@@ -173,26 +173,26 @@ const JobTable = () => {
           <tbody>
             {paginatedJobs.length ? (
               paginatedJobs.map((job) => (
-                <tr key={job.id} className="border-b border-gray-200 hover:bg-gray-50 transition">
-                  <td className="p-3">{job.title}</td>
-                  <td className="p-3">{job.company}</td>
-                  <td className="p-3">{job.category}</td>
-                  <td className="p-3">{job.location}</td>
-                  <td className="p-3">{job.type}</td>
-                  <td className="p-3">{job.postedDate}</td>
-                  <td className="p-3">{job.expiryDate}</td>
-                  <td className="p-3 text-center">{job.applications}</td>
-                  <td className="p-3">{job.status}</td>
+                <tr key={job.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                  <td className="p-3 text-gray-900 dark:text-gray-100">{job.title}</td>
+                  <td className="p-3 text-gray-900 dark:text-gray-100">{job.company}</td>
+                  <td className="p-3 text-gray-900 dark:text-gray-100">{job.category}</td>
+                  <td className="p-3 text-gray-900 dark:text-gray-100">{job.location}</td>
+                  <td className="p-3 text-gray-900 dark:text-gray-100">{job.type}</td>
+                  <td className="p-3 text-gray-900 dark:text-gray-100">{job.postedDate}</td>
+                  <td className="p-3 text-gray-900 dark:text-gray-100">{job.expiryDate}</td>
+                  <td className="p-3 text-center text-gray-900 dark:text-gray-100">{job.applications}</td>
+                  <td className="p-3 text-gray-900 dark:text-gray-100">{job.status}</td>
                   <td className="p-3 flex items-center space-x-3">
-                    <button className="text-blue-500 hover:text-blue-700" onClick={() => { setSelectedJob(job); setOpenView(true); }}><FiEye size={18} /></button>
-                    <button className="text-green-500 hover:text-green-700" onClick={() => { setSelectedJob(job); setOpenUpdate(true); }}><FiEdit size={18} /></button>
-                    <button className="text-red-500 hover:text-red-700" onClick={() => { setSelectedJob(job); setOpenDelete(true); }}><FiTrash2 size={18} /></button>
+                    <button className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300" onClick={() => { setSelectedJob(job); setOpenView(true); }}><FiEye size={18} /></button>
+                    <button className="text-green-500 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300" onClick={() => { setSelectedJob(job); setOpenUpdate(true); }}><FiEdit size={18} /></button>
+                    <button className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300" onClick={() => { setSelectedJob(job); setOpenDelete(true); }}><FiTrash2 size={18} /></button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="10" className="text-center p-5 text-gray-500 border-t border-gray-300">
+                <td colSpan="10" className="text-center p-5 text-gray-500 dark:text-gray-400 border-t border-gray-300 dark:border-gray-700">
                   No jobs found.
                 </td>
               </tr>
@@ -204,7 +204,7 @@ const JobTable = () => {
       {/* Pagination Controls */}
       <div className="flex flex-col sm:flex-row justify-between items-center mt-6 px-4 gap-4">
         <div className="flex items-center space-x-2">
-          <span className="text-gray-700 text-sm font-medium">Show per page:</span>
+          <span className="text-gray-700 dark:text-gray-300 text-sm font-medium">Show per page:</span>
           <Select
             value={rowsPerPage}
             size="small"
@@ -214,7 +214,7 @@ const JobTable = () => {
             {[5, 10, 20, 50].map((num) => <MenuItem key={num} value={num}>{num}</MenuItem>)}
           </Select>
         </div>
-        <div className="text-gray-700 text-sm font-medium">Page {page} / {totalPages}</div>
+        <div className="text-gray-700 dark:text-gray-300 text-sm font-medium">Page {page} / {totalPages}</div>
         <Pagination
           count={totalPages}
           page={page}

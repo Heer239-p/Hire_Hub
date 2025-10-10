@@ -4,8 +4,8 @@ const ViewModel = ({ employer, onClose }) => {
   if (!employer) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-lg p-6 w-11/12 md:w-2/3 lg:w-1/2">
+    <div className="fixed inset-0 flex items-center justify-center bg-white/40 backdrop-blur-sm z-50">
+      <div className="bg-white rounded-2xl p-10 w-full max-w-2xl shadow-xl relative border border-gray-100">
         <h2 className="text-xl font-semibold mb-4 text-gray-800 flex items-center justify-center">View Employer</h2>
 
         {/* Profile Image */}

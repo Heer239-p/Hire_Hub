@@ -33,16 +33,16 @@ const RecentActivity = ({ activitiesProp }) => {
   }, []);
 
   return (
-    <div className="bg-white rounded-2xl shadow-md p-6">
-      <h2 className="text-lg font-semibold mb-4 text-gray-900">🕒 Recent Activity</h2>
-      <ul className="divide-y divide-gray-200">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md dark:shadow-gray-900 p-6">
+      <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">🕒 Recent Activity</h2>
+      <ul className="divide-y divide-gray-200 dark:divide-gray-700">
         {activities.length === 0 ? (
-          <li className="py-3 text-gray-500">No recent activity</li>
+          <li className="py-3 text-gray-500 dark:text-gray-400">No recent activity</li>
         ) : (
           activities.map((activity) => (
             <li key={activity.id} className="py-3 flex justify-between items-center">
-              <p className="text-gray-700">{activity.message}</p>
-              <span className="text-sm text-gray-500">{activity.time}</span>
+              <p className={`${activity.color || 'text-gray-700 dark:text-gray-300'}`}>{activity.message}</p>
+              <span className="text-sm text-gray-500 dark:text-gray-400">{activity.time}</span>
             </li>
           ))
         )}

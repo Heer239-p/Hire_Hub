@@ -8,9 +8,9 @@ const AdminLayout = ({ children }) => {
   const toggleSidebar = () => setCollapsed(prev => !prev);
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen dark:bg-gray-950">
       <div
-        className={`fixed top-0 left-0 h-screen z-20 bg-gray-900 transition-all duration-300 ${
+        className={`fixed top-0 left-0 h-screen z-20 bg-gray-900 dark:bg-black transition-all duration-300 ${
           collapsed ? 'w-16' : 'w-64'
         }`}
       >
@@ -23,14 +23,14 @@ const AdminLayout = ({ children }) => {
         }`}
       >
         <div
-          className={`fixed top-0 right-0 h-16 bg-white shadow z-10 transition-all duration-300 ${
+          className={`fixed top-0 right-0 h-16 bg-white dark:bg-gray-900 shadow dark:shadow-gray-800 z-10 transition-all duration-300 ${
             collapsed ? 'left-16' : 'left-64'
           }`}
         >
           <Header onToggleSidebar={toggleSidebar} />
         </div>
 
-        <main className="mt-16 flex-1 overflow-auto bg-gray-100 p-6">
+        <main className="mt-16 flex-1 overflow-auto bg-gray-100 dark:bg-gray-950 p-6">
           {children}
         </main>
       </div>

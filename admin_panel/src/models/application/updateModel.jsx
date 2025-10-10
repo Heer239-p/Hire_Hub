@@ -24,22 +24,62 @@ const UpdateModel = ({ application, onClose, onUpdate }) => {
   if (!application) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-lg p-6 w-11/12 md:w-1/2">
-        <h2 className="text-xl font-semibold mb-4">Update Application</h2>
-        <div className="space-y-3">
-          <input type="text" name="jobTitle" value={formData.jobTitle} onChange={handleChange} className="w-full border px-3 py-2 rounded-lg"/>
-          <input type="text" name="applicant" value={formData.applicant} onChange={handleChange} className="w-full border px-3 py-2 rounded-lg"/>
-          <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full border px-3 py-2 rounded-lg"/>
-          <select name="status" value={formData.status} onChange={handleChange} className="w-full border px-3 py-2 rounded-lg">
+    <div className="fixed inset-0 flex items-center justify-center bg-white/40 backdrop-blur-sm z-50">
+      <div className="bg-white rounded-2xl p-10 w-full max-w-2xl shadow-xl relative border border-gray-100">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">
+          Update Application
+        </h2>
+
+        <div className="space-y-4">
+          <input
+            type="text"
+            name="jobTitle"
+            value={formData.jobTitle}
+            onChange={handleChange}
+            placeholder="Job Title"
+            className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+          />
+          <input
+            type="text"
+            name="applicant"
+            value={formData.applicant}
+            onChange={handleChange}
+            placeholder="Applicant Name"
+            className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+          />
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Email"
+            className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+          />
+          <select
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+            className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+          >
             <option value="Pending">Pending</option>
             <option value="Approved">Approved</option>
             <option value="Rejected">Rejected</option>
           </select>
         </div>
-        <div className="mt-5 flex justify-end gap-2">
-          <button onClick={onClose} className="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
-          <button onClick={handleSubmit} className="bg-green-500 px-4 py-2 rounded-lg text-white hover:bg-green-600">Update</button>
+
+        <div className="mt-6 flex justify-end gap-3">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSubmit}
+            className="px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600 transition"
+          >
+            Update
+          </button>
         </div>
       </div>
     </div>
@@ -47,3 +87,4 @@ const UpdateModel = ({ application, onClose, onUpdate }) => {
 };
 
 export default UpdateModel;
+  

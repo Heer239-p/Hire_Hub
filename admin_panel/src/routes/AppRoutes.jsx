@@ -10,7 +10,11 @@ import PrivateRoute from '../components/PrivateRoute';
 import AdminLayout from '../layouts/AdminLayout';  // <-- import layout here
 import { isAuthenticated } from '../utils/auth';
 import Employers from '../pages/employers';
-import Profile from "../pages/Profile";
+import Profile from "../pages/profile";
+import Category from "../pages/categories"; 
+import Categories from '../pages/categories';
+import Payment from '../pages/Payment';
+import Reviews from '../pages/Reviews';
 
 
 const AppRoutes = () => {
@@ -99,10 +103,38 @@ const AppRoutes = () => {
 />
 
 
-     
+   <Route
+  path="/categories"
+  element={
+    <PrivateRoute>
+      <AdminLayout>
+        <Categories />
+      </AdminLayout>
+    </PrivateRoute>
+  }
+/>
 
+<Route
+  path="/payment"
+  element={
+    <PrivateRoute>
+      <AdminLayout>
+        <Payment />
+      </AdminLayout>
+    </PrivateRoute>
+  }
+/>
 
-
+<Route
+  path="/reviews"
+  element={
+    <PrivateRoute>
+      <AdminLayout>
+        <Reviews />
+      </AdminLayout>
+    </PrivateRoute>
+  }
+/>
 
       {/* Catch all unknown routes and redirect accordingly */}
       <Route
