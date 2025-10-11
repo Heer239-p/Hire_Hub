@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { FiMenu, FiSun, FiMoon, FiBell, FiX } from "react-icons/fi";
 import { useNavigate } from "react-router-dom"; 
-import adminDP from "../assets/images/admin_dp.png";
-import profile from "../pages/profile";
+import { useProfile } from "../context/ProfileContext";
+
 const Header = ({ onToggleSidebar }) => {
+  const { profileImage } = useProfile();
   const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
@@ -118,7 +119,7 @@ const Header = ({ onToggleSidebar }) => {
 
         {/* Admin Profile Image */}
         <img
-  src="https://www.pngmart.com/files/21/Admin-Profile-Vector-PNG-Clipart.png"
+  src={profileImage}
   alt="Admin Profile"
   onClick={() => navigate("/profile")}
   className="w-10 h-10 rounded-full object-cover cursor-pointer transition-transform duration-200 hover:scale-105"

@@ -127,23 +127,10 @@
 import React, { useState } from "react";
 import { FiEdit, FiCamera } from "react-icons/fi";
 import UpdateModel from "../models/profile/updateModel"; // ✅ Import your modal
+import { useProfile } from "../context/ProfileContext";
 
 const Profile = () => {
-  const [profileImage, setProfileImage] = useState(
-    "https://www.pngmart.com/files/21/Admin-Profile-Vector-PNG-Clipart.png"
-  );
-
-  const [admin, setAdmin] = useState({
-    firstName: "Hiral",
-    lastName: "Prajapati",
-    dob: "1990-01-01",
-    email: "admin@company.com",
-    phone: "+91 1234567890",
-    role: "Administrator",
-    country: "India",
-    city: "Ahmedabad",
-    pincode: "380001",
-  });
+  const { profileImage, updateProfileImage, admin, updateAdmin } = useProfile();
 
   const [openModal, setOpenModal] = useState(false); // ✅ Modal visibility
   const [editSection, setEditSection] = useState(""); // ✅ Which section is being edited
@@ -151,7 +138,7 @@ const Profile = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setProfileImage(URL.createObjectURL(file));
+      updateProfileImage(URL.createObjectURL(file));
     }
   };
 
@@ -161,10 +148,7 @@ const Profile = () => {
   };
 
   const handleUpdate = (updatedData) => {
-    setAdmin((prev) => ({
-      ...prev,
-      ...updatedData,
-    }));
+    updateAdmin(updatedData);
     setOpenModal(false);
   };
 
