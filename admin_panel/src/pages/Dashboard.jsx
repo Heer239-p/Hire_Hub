@@ -604,51 +604,51 @@ const Dashboard = () => {
 
       {/* Charts */}
       <section className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg dark:shadow-gray-900/50 border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Overall Distribution</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg dark:shadow-gray-900/50 border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">Overall Distribution</h2>
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
           </div>
           <div className="flex flex-col items-center justify-center">
-            <PieChart width={280} height={280}>
-              <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={5} dataKey="value">
+            <PieChart width={200} height={200}>
+              <Pie data={pieData} cx="50%" cy="50%" innerRadius={45} outerRadius={75} paddingAngle={4} dataKey="value">
                 {pieData.map((entry, index) => <Cell key={index} fill={entry.color} />)}
               </Pie>
             </PieChart>
-            <div className="mt-6 space-y-2 w-full">
+            <div className="mt-3 space-y-1.5 w-full">
               {pieData.map((entry, idx) => (
-                <div key={idx} className="flex items-center justify-between px-4 py-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <span className="inline-block w-4 h-4 rounded-full" style={{ backgroundColor: entry.color }} />
-                    <span className="font-medium text-gray-700 dark:text-gray-300">{entry.name}</span>
+                <div key={idx} className="flex items-center justify-between px-3 py-1.5 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{entry.name}</span>
                   </div>
-                  <span className="font-bold text-gray-900 dark:text-gray-100">{entry.value}</span>
+                  <span className="text-sm font-bold text-gray-900 dark:text-gray-100">{entry.value}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg dark:shadow-gray-900/50 border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Monthly Overview</h2>
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg dark:shadow-gray-900/50 border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">Monthly Overview</h2>
+            <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
               <span>Trending Up</span>
             </div>
           </div>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={chartData} margin={{ top: 10, right: 20, bottom: 5, left: 0 }}>
+          <ResponsiveContainer width="100%" height={180}>
+            <BarChart data={chartData} margin={{ top: 10, right: 15, bottom: 5, left: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" vertical={false} />
-              <XAxis dataKey="month" stroke="#9ca3af" tickLine={false} />
-              <YAxis stroke="#9ca3af" tickLine={false} />
+              <XAxis dataKey="month" stroke="#9ca3af" tickLine={false} style={{ fontSize: '12px' }} />
+              <YAxis stroke="#9ca3af" tickLine={false} style={{ fontSize: '12px' }} />
               <Tooltip content={<CustomTooltip />} cursor={{ fill: "#f9fafb" }} />
-              <Legend verticalAlign="top" height={25} />
-              <Bar dataKey="jobs" name="Jobs" fill="#3b82f6" radius={[6, 6, 0, 0]} barSize={20} />
-              <Bar dataKey="users" name="Users" fill="#10b981" radius={[6, 6, 0, 0]} barSize={20} />
-              <Bar dataKey="applications" name="Applications" fill="#8b5cf6" radius={[6, 6, 0, 0]} barSize={20} />
+              <Legend verticalAlign="top" height={20} wrapperStyle={{ fontSize: '12px' }} />
+              <Bar dataKey="jobs" name="Jobs" fill="#3b82f6" radius={[6, 6, 0, 0]} barSize={18} />
+              <Bar dataKey="users" name="Users" fill="#10b981" radius={[6, 6, 0, 0]} barSize={18} />
+              <Bar dataKey="applications" name="Applications" fill="#8b5cf6" radius={[6, 6, 0, 0]} barSize={18} />
             </BarChart>
           </ResponsiveContainer>
         </div>
