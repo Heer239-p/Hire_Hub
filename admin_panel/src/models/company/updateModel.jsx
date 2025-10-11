@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 
-const UpdateModel = ({ company, onClose }) => {
+const UpdateModel = ({ company, onClose, onUpdate }) => {
   const [form, setForm] = useState({ ...company });
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Updated company:", form);
+    onUpdate(form);
     onClose();
   };
 

@@ -1,7 +1,12 @@
 import React from "react";
 
-const DeleteModel = ({ company, onClose, onConfirm }) => {
+const DeleteModel = ({ company, onClose, onDelete }) => {
   if (!company) return null;
+
+  const handleDelete = () => {
+    onDelete(company.id);
+    onClose();
+  };
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -18,7 +23,7 @@ const DeleteModel = ({ company, onClose, onConfirm }) => {
             Cancel
           </button>
           <button
-            onClick={onConfirm}
+            onClick={handleDelete}
             className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
           >
             Delete
