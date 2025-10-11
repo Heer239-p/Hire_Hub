@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FiMenu, FiSun, FiMoon, FiBell } from "react-icons/fi";
+import { FiMenu, FiSun, FiMoon, FiBell, FiX } from "react-icons/fi";
 import { useNavigate } from "react-router-dom"; 
 import adminDP from "../assets/images/admin_dp.png";
 import profile from "../pages/profile";
@@ -76,12 +76,26 @@ const Header = ({ onToggleSidebar }) => {
                   notifications.map((note) => (
                     <li
                       key={note.id}
-                      className="text-sm text-gray-700 dark:text-gray-300 py-2 border-b border-gray-100 dark:border-gray-700 last:border-none"
+                      className="group text-sm text-gray-700 dark:text-gray-300 py-2 px-2 border-b border-gray-100 dark:border-gray-700 last:border-none hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded transition-colors relative"
                     >
-                      {note.message}
-                      <span className="block text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        {note.time}
-                      </span>
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1">
+                          <p>{note.message}</p>
+                          <span className="block text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            {note.time}
+                          </span>
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setNotifications(notifications.filter(n => n.id !== note.id));
+                          }}
+                          className="text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+                          title="Remove notification"
+                        >
+                          <FiX size={16} />
+                        </button>
+                      </div>
                     </li>
                   ))
                 ) : (

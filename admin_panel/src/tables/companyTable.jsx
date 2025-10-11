@@ -15,27 +15,43 @@ const CompaniesTable = () => {
   const storedCompanies = JSON.parse(localStorage.getItem("companies")) || [
     {
       id: 1,
-      name: "TechCorp",
-      industry: "IT",
-      website: "https://techcorp.com",
-      description: "Leading software solutions provider",
-      logo: "https://www.clipartmax.com/png/middle/183-1833550_company-profile-icon.png", // Updated default logo
+      name: "Google",
+      industry: "Technology",
+      website: "https://google.com",
+      description: "Leading search engine and technology company",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png",
     },
     {
       id: 2,
-      name: "DesignHub",
-      industry: "Design",
-      website: "https://designhub.com",
-      description: "Creative design agency",
-      logo: "https://www.clipartmax.com/png/middle/183-1833550_company-profile-icon.png", // Updated default logo
+      name: "Microsoft",
+      industry: "Technology",
+      website: "https://microsoft.com",
+      description: "Global technology company and software provider",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/768px-Microsoft_logo.svg.png",
     },
     {
       id: 3,
-      name: "HealthPlus",
-      industry: "Healthcare",
-      website: "https://healthplus.com",
-      description: "Healthcare solutions and consulting",
-      logo: "https://www.clipartmax.com/png/middle/183-1833550_company-profile-icon.png", // Updated default logo
+      name: "Apple",
+      industry: "Technology",
+      website: "https://apple.com",
+      description: "Consumer electronics and software company",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/488px-Apple_logo_black.svg.png",
+    },
+    {
+      id: 4,
+      name: "Amazon",
+      industry: "E-commerce",
+      website: "https://amazon.com",
+      description: "E-commerce and cloud computing company",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/603px-Amazon_logo.svg.png",
+    },
+    {
+      id: 5,
+      name: "Meta",
+      industry: "Social Media",
+      website: "https://meta.com",
+      description: "Social media and technology conglomerate",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Meta_Platforms_Inc._logo.svg/768px-Meta_Platforms_Inc._logo.svg.png",
     },
   ];
 
@@ -156,7 +172,7 @@ const CompaniesTable = () => {
         <table className="w-full bg-white dark:bg-gray-800 text-sm border-t border-gray-300 dark:border-gray-700 border-collapse">
           <thead className="bg-blue-500 dark:bg-blue-700 text-white uppercase text-sm">
             <tr>
-              {["Name", "Industry", "Website", "Description", "Logo", "Actions"].map((head) => (
+              {["Logo", "Name", "Industry", "Website", "Description", "Actions"].map((head) => (
                 <th key={head} className="p-3 text-left font-semibold">
                   {head}
                 </th>
@@ -167,7 +183,14 @@ const CompaniesTable = () => {
             {paginatedCompanies.length ? (
               paginatedCompanies.map((c) => (
                 <tr key={c.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                  <td className="p-3 text-gray-900 dark:text-gray-100">{c.name}</td>
+                  <td className="p-3">
+                    <img
+                      src={c.logo}
+                      alt={c.name}
+                      className="w-12 h-12 object-contain rounded"
+                    />
+                  </td>
+                  <td className="p-3 text-gray-900 dark:text-gray-100 font-semibold">{c.name}</td>
                   <td className="p-3 text-gray-900 dark:text-gray-100">{c.industry}</td>
                   <td className="p-3">
                     <a
@@ -180,13 +203,6 @@ const CompaniesTable = () => {
                     </a>
                   </td>
                   <td className="p-3 text-gray-900 dark:text-gray-100">{c.description}</td>
-                  <td className="p-3">
-                    <img
-                      src={c.logo}
-                      alt={c.name}
-                      className="w-10 h-10 rounded-full"
-                    />
-                  </td>
                   <td className="p-3 flex items-center space-x-3">
                     <button
                       className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"

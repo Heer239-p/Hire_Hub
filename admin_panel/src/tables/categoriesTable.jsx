@@ -153,14 +153,14 @@ const CategoryTable = () => {
                 <td className="p-3 text-gray-600 dark:text-gray-300">{cat.description}</td>
                 <td className="p-3 text-gray-600 dark:text-gray-300">{cat.createdDate}</td>
                 <td className="p-3 flex items-center space-x-3">
-                  <button className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300" onClick={() => { setSelectedCategory(cat); setOpenView(true); }}>
-                    <FiEye />
+                  <button className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300" onClick={() => { setSelectedCategory(cat); setOpenView(true); }} title="View Details">
+                    <FiEye size={20} />
                   </button>
-                  <button className="text-green-500 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300" onClick={() => { setSelectedCategory(cat); setOpenUpdate(true); }}>
-                    <FiEdit />
+                  <button className="text-green-500 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300" onClick={() => { setSelectedCategory(cat); setOpenUpdate(true); }} title="Edit Category">
+                    <FiEdit size={20} />
                   </button>
-                  <button className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300" onClick={() => { setSelectedCategory(cat); setOpenDelete(true); }}>
-                    <FiTrash2 />
+                  <button className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300" onClick={() => { setSelectedCategory(cat); setOpenDelete(true); }} title="Delete Category">
+                    <FiTrash2 size={20} />
                   </button>
                 </td>
               </tr>

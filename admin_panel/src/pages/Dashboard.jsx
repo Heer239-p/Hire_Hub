@@ -269,7 +269,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 // Recent Activity Component with pagination
-const RecentActivity = ({ activities }) => {
+const RecentActivity = ({ activities, onClearAll }) => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 5;
   
@@ -281,10 +281,26 @@ const RecentActivity = ({ activities }) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg dark:shadow-gray-900/50 border border-gray-100 dark:border-gray-700 p-6 h-full flex flex-col">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">🕒 Recent Activity</h2>
-        <span className="text-sm text-gray-500 dark:text-gray-400">
-          {activities.length} total
-        </span>
+        <div className="flex items-center gap-3">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">🕒 Recent Activity</h2>
+          <span className="text-sm text-gray-500 dark:text-gray-400">
+            {activities.length} total
+          </span>
+        </div>
+        {activities.length > 0 && (
+          <button
+            onClick={() => {
+              if (window.confirm('Are you sure you want to clear all activities?')) {
+                onClearAll();
+                setCurrentPage(1);
+              }
+            }}
+            className="text-xs px-3 py-1 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 rounded-lg font-medium transition-colors"
+            title="Clear all activities"
+          >
+            Clear All
+          </button>
+        )}
       </div>
       
       <ul className="divide-y divide-gray-200 dark:divide-gray-700 flex-1 overflow-hidden">
@@ -357,6 +373,13 @@ const Dashboard = () => {
     } catch (e) {
       console.error("Failed to load recent activities from localStorage", e);
     }
+  };
+
+  // Clear all activities
+  const clearAllActivities = () => {
+    setRecentActivities([]);
+    localStorage.setItem("recentActivities", JSON.stringify([]));
+    console.log("🗑️ Dashboard: All activities cleared");
   };
 
   // Load recent activities on mount
@@ -633,7 +656,7 @@ const Dashboard = () => {
 
       {/* Recent Activity + Quick Actions */}
       <section className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RecentActivity activities={recentActivities} />
+        <RecentActivity activities={recentActivities} onClearAll={clearAllActivities} />
 
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg dark:shadow-gray-900/50 border border-gray-100 dark:border-gray-700 p-6">
           <div className="flex items-center gap-2 mb-6">
