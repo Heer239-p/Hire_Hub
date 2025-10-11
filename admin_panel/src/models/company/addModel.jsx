@@ -28,7 +28,12 @@ const AddModel = ({ onClose, onAdd }) => {
   };
 
   const handleSubmit = () => {
-    onAdd(formData);
+    // Use default logo if no logo is uploaded
+    const companyData = {
+      ...formData,
+      logo: formData.logo || defaultLogo
+    };
+    onAdd(companyData);
     onClose();
   };
 
