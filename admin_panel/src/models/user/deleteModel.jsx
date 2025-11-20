@@ -4,7 +4,7 @@ const DeleteModel = ({ user, onClose, onDelete }) => {
   if (!user) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center backdrop-blur-sm z-50">
       <div className="bg-white rounded-xl shadow-lg p-6 w-11/12 md:w-1/3">
         <h2 className="text-xl font-semibold mb-4 text-gray-800">Delete User</h2>
         <p>Are you sure you want to delete <strong>{user.name}</strong>?</p>

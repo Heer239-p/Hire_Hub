@@ -27,6 +27,7 @@ const AddModel = ({ onClose, onAdd }) => {
     }
     
     await onAdd(jobData);
+    onClose();
   };
 
   return (

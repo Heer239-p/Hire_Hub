@@ -37,6 +37,7 @@ const AddModel = ({ onClose, onAdd }) => {
     }
     await onAdd(formData);
     console.log("User added:", formData);
+    onClose();
   };
 
   return (

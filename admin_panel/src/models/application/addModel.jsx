@@ -20,6 +20,7 @@ const AddModel = ({ onClose, onAdd }) => {
     }
     
     await onAdd(formData);
+    onClose();
   };
 
   return (

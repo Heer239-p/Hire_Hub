@@ -4,7 +4,7 @@ const DeleteModel = ({ category, onClose, onConfirm }) => {
   if (!category) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center backdrop-blur-sm z-50">
       <div className="bg-white rounded-lg p-6 w-100 text-center">
         <h2 className="text-xl font-semibold mb-4">Delete Category</h2>
         <p>Are you sure you want to delete <strong>{category.title}</strong>?</p>

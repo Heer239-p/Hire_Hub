@@ -148,7 +148,7 @@ const Sidebar = ({ collapsed }) => {
                     : 'text-gray-700 hover:bg-blue-200 hover:text-blue-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-blue-400'
                   }`}
               >
-                <Icon className="text-xl" />
+                <Icon className={`${collapsed ? 'text-2xl' : 'text-xl'}`} />
                 {!collapsed && <span className="text-sm font-medium">{label}</span>}
               </Link>
             );
@@ -162,7 +162,7 @@ const Sidebar = ({ collapsed }) => {
           className="flex items-center gap-4 w-full p-3 rounded-lg hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors text-gray-700 dark:text-gray-300 font-medium"
           onClick={handleLogout}
         >
-          <FiLogOut className="text-xl" />
+          <FiLogOut className={`${collapsed ? 'text-2xl' : 'text-xl'}`} />
           {!collapsed && <span className="text-sm">Logout</span>}
         </button>
       </div>
