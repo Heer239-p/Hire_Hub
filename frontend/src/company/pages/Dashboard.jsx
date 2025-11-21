@@ -12,15 +12,13 @@ const Dashboard = () => {
   const user = useAuthUser();
 
   return (
-    <section className="space-y-8">
-      <div>
-        <p className="text-sm uppercase text-slate-500 font-semibold tracking-wide">
-          Welcome back
-        </p>
-        <h1 className="text-3xl md:text-4xl font-bold text-slate-900">
+    <section className="space-y-8 py-16">
+      <div className="text-center space-y-3">
+        
+        <h1 className="text-3xl font-bold text-slate-900">
           {user?.companyName || "Your Company"}
         </h1>
-        <p className="text-slate-500 mt-2 max-w-2xl">
+        <p className="text-slate-500 max-w-2xl mx-auto">
           Track roles, manage applicants, and move faster with a focused employer workspace.
         </p>
       </div>

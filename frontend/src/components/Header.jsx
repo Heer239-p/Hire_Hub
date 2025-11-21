@@ -16,16 +16,30 @@ const employerLinks = [
   { label: "Post Job", to: "/company/post-job" },
   { label: "Manage Jobs", to: "/company/manage-jobs" },
   { label: "Applicants", to: "/company/applicants" },
+  { label: "Subscription", to: "/company/subscription" },
 ];
 
 const Header = () => {
   const [scroll, setScroll] = useState(false);
   const navigate = useNavigate();
   const user = useAuthUser();
+
   const isLoggedIn = !!user;
   const isEmployer = user?.role === "employer";
 
-  // Detect scroll
+  // Handle initials
+  const avatarInitials = user?.name
+    ? user.name
+        .split(" ")
+        .map((word) => word[0]?.toUpperCase())
+        .join("")
+    : "U";
+
+  // FIX: use backend URL for image path
+  const profileImageUrl = user?.profileImage
+    ? `http://localhost:5000/uploads/${user.profileImage}`
+    : null;
+
   useEffect(() => {
     const handleScroll = () => setScroll(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
@@ -34,14 +48,13 @@ const Header = () => {
 
   const navLinks = useMemo(() => (isEmployer ? employerLinks : userLinks), [isEmployer]);
 
-  // Logout handler
   const handleLogout = async () => {
     try {
       if (user?.token) {
         try {
           await logoutUser(user.token);
         } catch (error) {
-          console.warn("Logout API failed; falling back to client logout", error);
+          console.warn("Logout API failed, local logout", error);
         }
       }
 
@@ -62,6 +75,7 @@ const Header = () => {
       }`}
     >
       <div className="container mx-auto flex justify-between items-center px-6 py-4">
+
         {/* Logo */}
         <Link
           to="/"
@@ -99,6 +113,7 @@ const Header = () => {
               >
                 Sign Up
               </Link>
+
               <Link
                 to="/login"
                 className={`px-4 py-2 rounded-md transition ${
@@ -111,41 +126,32 @@ const Header = () => {
               </Link>
             </>
           ) : (
-            <>
-              {isEmployer ? (
-                <Link
-                  to="/company/dashboard"
-                  className={`px-4 py-2 rounded-md transition ${
-                    scroll
-                      ? "bg-blue-500 text-white hover:bg-blue-600"
-                      : "bg-transparent border border-white text-white hover:bg-white hover:text-black"
-                  }`}
-                >
-                  Employer Hub
-                </Link>
-              ) : (
-                <Link
-                  to="/userapplications"
-                  className={`px-4 py-2 rounded-md transition ${
-                    scroll
-                      ? "bg-blue-500 text-white hover:bg-blue-600"
-                      : "bg-transparent border border-white text-white hover:bg-white hover:text-black"
-                  }`}
-                >
-                  My Space
-                </Link>
-              )}
+            <div className="inline-flex items-center gap-3">
+
+              {/* Logout */}
               <button
                 onClick={handleLogout}
-                className={`px-4 py-2 rounded-md transition ${
-                  scroll
-                    ? "bg-white text-black hover:bg-gray-200"
-                    : "bg-white text-black hover:bg-gray-200"
-                }`}
+                className="px-4 py-2 rounded-md bg-white text-black hover:bg-gray-200 transition"
               >
                 Logout
               </button>
-            </>
+
+              {/* Profile */}
+              <button
+                onClick={() => navigate("/profile")}
+                className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center text-sm font-semibold"
+              >
+                {profileImageUrl ? (
+                  <img
+                    src={profileImageUrl}
+                    alt="profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span>{avatarInitials}</span>
+                )}
+              </button>
+            </div>
           )}
         </div>
       </div>

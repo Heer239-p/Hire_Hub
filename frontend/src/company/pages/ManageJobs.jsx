@@ -26,10 +26,10 @@ const ManageJobs = () => {
 
   return (
     <section>
-      <div className="mb-8">
-        <p className="text-sm uppercase text-slate-500 font-semibold">Jobs</p>
+      <div className="mb-8 py-12 text-center space-y-3">
+       
         <h1 className="text-3xl font-bold text-slate-900">Manage Roles & Pipelines</h1>
-        <p className="text-slate-500 mt-2">
+        <p className="text-slate-500 max-w-2xl mx-auto">
           Review role health, applicants, and quick actions from a single place.
         </p>
       </div>

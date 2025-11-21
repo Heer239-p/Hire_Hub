@@ -32,10 +32,10 @@ const PostJob = () => {
 
   return (
     <section>
-      <div className="mb-8">
-        <p className="text-sm uppercase text-slate-500 font-semibold">Create</p>
+      <div className="mb-8 py-12 text-center space-y-3">
+        
         <h1 className="text-3xl font-bold text-slate-900">Post a new opportunity</h1>
-        <p className="text-slate-500 mt-2">
+        <p className="text-slate-500 max-w-2xl mx-auto">
           Share what makes this role special, and we’ll showcase it to the right talent pool.
         </p>
       </div>

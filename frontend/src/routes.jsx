@@ -18,7 +18,9 @@ import Dashboard from "./company/pages/Dashboard";
 import ManageJobs from "./company/pages/ManageJobs";
 import PostJob from "./company/pages/PostJob";
 import Applicants from "./company/pages/Applicants";
+import ApplicantDetails from "./company/pages/ApplicantDetails";
 import Profile from "./company/pages/Profile";
+import Subscription from "./company/pages/Subscription";
 
 const AppRoutes = () => {
   return (
@@ -49,6 +51,14 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
+         <Route
+          path="profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
         <Route path="contact" element={<Contact />} />
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Register />} />
@@ -68,7 +78,9 @@ const AppRoutes = () => {
         <Route path="post-job" element={<PostJob />} />
         <Route path="manage-jobs" element={<ManageJobs />} />
         <Route path="applicants" element={<Applicants />} />
+        <Route path="applicant-details" element={<ApplicantDetails />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="subscription" element={<Subscription />} />
       </Route>
     </Routes>
   );
