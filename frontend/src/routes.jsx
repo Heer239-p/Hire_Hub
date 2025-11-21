@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import Layout from "./components/Layout";
 import Home from "./jobseekers/pages/Home";
@@ -12,8 +12,14 @@ import Register from "./jobseekers/pages/Register";
 import Categories from "./jobseekers/pages/ExploreCategories";
 import ProtectedRoute from "./components/ProtectedRoute";
 import BrowseJobs from "./jobseekers/pages/BrowseJobs";
-import application from "./jobseekers/pages/UserApplications";
 import UserApplications from "./jobseekers/pages/UserApplications";
+import CompanyLayout from "./company/layouts/CompanyLayout";
+import Dashboard from "./company/pages/Dashboard";
+import ManageJobs from "./company/pages/ManageJobs";
+import PostJob from "./company/pages/PostJob";
+import Applicants from "./company/pages/Applicants";
+import Profile from "./company/pages/Profile";
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -48,7 +54,21 @@ const AppRoutes = () => {
         <Route path="signup" element={<Register />} />
         <Route path="categories" element={<Categories />} />
         <Route path="browse-jobs" element={<BrowseJobs />} />
-
+      </Route>
+      <Route
+        path="/company"
+        element={
+          <ProtectedRoute allowedRoles={["employer"]}>
+            <Layout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Navigate to="dashboard" replace />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="post-job" element={<PostJob />} />
+        <Route path="manage-jobs" element={<ManageJobs />} />
+        <Route path="applicants" element={<Applicants />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
     </Routes>
   );

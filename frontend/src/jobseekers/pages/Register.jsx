@@ -62,8 +62,10 @@ const Signup = () => {
 
       const { data } = await registerUser(payload);
       localStorage.setItem("userInfo", JSON.stringify(data));
+      window.dispatchEvent(new Event("authChange"));
+
       toast.success("Registration successful!");
-      navigate("/login");
+      navigate((data.role || formData.role) === "employer" ? "/company/dashboard" : "/");
     } catch (error) {
       toast.error(error.response?.data?.message || "Signup failed");
     }

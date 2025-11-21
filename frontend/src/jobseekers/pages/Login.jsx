@@ -25,8 +25,8 @@ const Login = () => {
       window.dispatchEvent(new Event("authChange"));
 
       toast.success("Login successful!");
-      navigate("/"); // redirect after login
-    } catch (error) {
+      navigate(data.role === "employer" ? "/company/dashboard" : "/");
+      } catch (error) {
       toast.error(error.response?.data?.message || "Login failed");
     }
   };
