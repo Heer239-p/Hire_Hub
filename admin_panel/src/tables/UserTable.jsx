@@ -219,12 +219,6 @@ const UserTable = () => {
         />
         <div className="flex items-center space-x-2">
           <button
-            onClick={() => setOpenAdd(true)}
-            className="flex items-center bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow"
-          >
-            <FiPlus className="mr-2" size={18} /> Add User
-          </button>
-          <button
             onClick={exportPDF}
             className="bg-green-500 dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow"
           >
