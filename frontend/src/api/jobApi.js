@@ -23,3 +23,6 @@ export const getAllJobs = async (page = 1, limit = 3, filters = {}) => {
     return { jobs: [], totalPages: 1 };
   }
 };
+
+
+

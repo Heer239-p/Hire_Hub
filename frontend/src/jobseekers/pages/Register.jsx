@@ -65,9 +65,12 @@ const Signup = () => {
       window.dispatchEvent(new Event("authChange"));
 
       toast.success("Registration successful!");
+       setTimeout(() => {
+    navigate("/login");
+  }, 1200);
       navigate((data.role || formData.role) === "employer" ? "/company/dashboard" : "/");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Signup failed");
+      
     }
   };
 

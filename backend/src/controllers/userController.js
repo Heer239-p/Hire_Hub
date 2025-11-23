@@ -74,40 +74,48 @@ export const updateUserProfile = async (req, res) => {
 // ====================================================
 // APPLY TO A JOB (Job Seekers only)
 // ====================================================
+// ====================================================
+// APPLY TO A JOB (Job Seekers only)
+// ====================================================
 export const applyJob = async (req, res) => {
   try {
     const jobId = req.params.id;
     const userId = req.user._id;
     const { coverLetter } = req.body;
-    const resumeFile = req.file ? req.file.filename : null; // uploaded resume (PDF, DOCX)
 
-    // Validate resume
-    if (!resumeFile) {
+    // Resume required
+    if (!req.file) {
       return errorResponse(res, 400, "Resume file is required ❌");
     }
+
+    const resumeFile = req.file.filename;
 
     // Check job exists
     const job = await Job.findById(jobId);
     if (!job) return errorResponse(res, 404, "Job not found ❌");
 
-    // Check if employer applying to own job
+    // Prevent employer applying to own job
     if (job.employer.toString() === userId.toString()) {
       return errorResponse(res, 400, "You cannot apply to your own job ❌");
     }
 
-    // Ensure only job seekers can apply
+    // Only normal user can apply
     const user = await User.findById(userId);
     if (user.role !== "user") {
       return errorResponse(res, 403, "Only job seekers can apply for jobs ❌");
     }
 
     // Prevent duplicate application
-    const alreadyApplied = await Application.findOne({ job: jobId, applicant: userId });
+    const alreadyApplied = await Application.findOne({
+      job: jobId,
+      applicant: userId,
+    });
+
     if (alreadyApplied) {
-      return errorResponse(res, 400, "You have already applied to this job ✅");
+      return errorResponse(res, 400, "You have already applied to this job ❌");
     }
 
-    // Create new application
+    // Create application
     const application = await Application.create({
       job: jobId,
       applicant: userId,
@@ -116,7 +124,7 @@ export const applyJob = async (req, res) => {
       status: "Applied",
     });
 
-    // Also push applicant to job (optional, for quick lookup)
+    // Add applicant to job applicants list
     job.applicants.push(userId);
     await job.save();
 
@@ -126,7 +134,9 @@ export const applyJob = async (req, res) => {
       applicant: userId,
       resume: resumeFile,
       coverLetter: coverLetter || "",
+      status: "Applied",
     });
+
   } catch (error) {
     console.error("Error applying to job:", error);
     return errorResponse(res, 500, "Server error while applying to job ⚠️", {

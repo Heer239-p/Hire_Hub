@@ -129,12 +129,12 @@ const EmployerTable = () => {
         />
 
         <div className="flex items-center space-x-2">
-          <button
+          {/* <button
             onClick={() => setOpenAdd(true)}
             className="flex items-center bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow"
           >
             <FiPlus className="mr-2" size={18} /> Add Employer
-          </button>
+          </button> */}
 
           <button
             onClick={exportPDF}

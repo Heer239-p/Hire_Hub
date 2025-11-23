@@ -9,9 +9,14 @@ const api = axios.create({
 // REGISTER USER / EMPLOYER
 // ==========================
 export const registerUser = async (formData) => {
-  const config = { headers: { "Content-Type": "multipart/form-data" } };
-  const { data } = await api.post("/register", formData, config);
-  return data;
+  try {
+    const config = { headers: { "Content-Type": "multipart/form-data" } };
+    const { data } = await api.post("/register", formData, config);
+    return data;
+  } catch (error) {
+    // IMPORTANT
+    throw error;
+  }
 };
 
 // ==========================
