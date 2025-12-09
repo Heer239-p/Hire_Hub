@@ -1,14 +1,13 @@
 // utils/auth.js
 
 export const isAuthenticated = () => {
-  // You can use localStorage, cookies, or any storage to keep auth status
-  return !!localStorage.getItem('authToken');
+  return !!localStorage.getItem('adminToken');
 };
 
 export const login = (token) => {
-  localStorage.setItem('authToken', token);
+  localStorage.setItem('adminToken', token);
 };
 
 export const logout = () => {
-  localStorage.removeItem('authToken');
+  localStorage.removeItem('adminToken');
 };

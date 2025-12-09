@@ -93,22 +93,30 @@ const AvailableJobs = () => {
             </div>
             <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div className="flex flex-col">
-                <label className="text-gray-700 font-medium mb-1">Full Name</label>
+                <label className="text-gray-700 font-medium mb-1">
+                  Full Name <span className="text-red-500">*</span>
+                </label>
                 <input type="text" className={`w-full border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none ${errors.name ? "border-red-500" : ""}`} value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
                 {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
               </div>
               <div className="flex flex-col">
-                <label className="text-gray-700 font-medium mb-1">Email Address</label>
+                <label className="text-gray-700 font-medium mb-1">
+                  Email Address <span className="text-red-500">*</span>
+                </label>
                 <input type="email" className={`w-full border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none ${errors.email ? "border-red-500" : ""}`} value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
                 {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
               </div>
               <div className="flex flex-col md:col-span-2">
-                <label className="text-gray-700 font-medium mb-1">Upload Resume</label>
+                <label className="text-gray-700 font-medium mb-1">
+                  Upload Resume <span className="text-red-500">*</span>
+                </label>
                 <input type="file" accept=".pdf,.doc,.docx" className={`w-full border border-gray-300 rounded-lg px-4 py-2 shadow-sm ${errors.resume ? "border-red-500" : ""}`} onChange={(e) => setFormData({ ...formData, resume: e.target.files[0] })} />
                 {errors.resume && <p className="text-red-500 text-sm mt-1">{errors.resume}</p>}
               </div>
               <div className="flex flex-col md:col-span-2">
-                <label className="text-gray-700 font-medium mb-1">Cover Letter</label>
+                <label className="text-gray-700 font-medium mb-1">
+                  Cover Letter <span className="text-red-500">*</span>
+                </label>
                 <textarea rows="4" className={`w-full border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none ${errors.coverLetter ? "border-red-500" : ""}`} placeholder="Write a short message..." value={formData.coverLetter} onChange={(e) => setFormData({ ...formData, coverLetter: e.target.value })}></textarea>
                 {errors.coverLetter && <p className="text-red-500 text-sm mt-1">{errors.coverLetter}</p>}   
               </div>

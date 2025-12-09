@@ -10,12 +10,42 @@ import {
 } from "lucide-react";
 
 const categories = [
-  { name: "IT & Software", icon: <Monitor size={32} className="text-blue-500" />, bg: "bg-blue-100" },
-  { name: "Marketing", icon: <Megaphone size={32} className="text-pink-500" />, bg: "bg-pink-100" },
-  { name: "Design", icon: <Palette size={32} className="text-purple-500" />, bg: "bg-purple-100" },
-  { name: "Finance", icon: <BarChart size={32} className="text-green-500" />, bg: "bg-green-100" },
-  { name: "Engineering", icon: <Wrench size={32} className="text-yellow-500" />, bg: "bg-yellow-100" },
-  { name: "Business", icon: <Briefcase size={32} className="text-teal-500" />, bg: "bg-teal-100" },
+  {
+    name: "IT & Software",
+    icon: <Monitor size={32} className="text-blue-500" />,
+    bg: "bg-blue-100",
+    queryCategory: "IT",
+  },
+  {
+    name: "Marketing",
+    icon: <Megaphone size={32} className="text-pink-500" />,
+    bg: "bg-pink-100",
+    queryCategory: "Marketing",
+  },
+  {
+    name: "Design",
+    icon: <Palette size={32} className="text-purple-500" />,
+    bg: "bg-purple-100",
+    queryCategory: "Design",
+  },
+  {
+    name: "Finance",
+    icon: <BarChart size={32} className="text-green-500" />,
+    bg: "bg-green-100",
+    queryCategory: "Finance",
+  },
+  {
+    name: "Engineering",
+    icon: <Wrench size={32} className="text-yellow-500" />,
+    bg: "bg-yellow-100",
+    queryCategory: "Engineering",
+  },
+  {
+    name: "Business",
+    icon: <Briefcase size={32} className="text-teal-500" />,
+    bg: "bg-teal-100",
+    queryCategory: "Business",
+  },
 ];
 
 const ExploreCategories = () => {
@@ -32,7 +62,7 @@ const ExploreCategories = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">
           {categories.map((cat, index) => (
             <Link
-              to="/categories"
+              to={`/jobs${cat.queryCategory ? `?category=${encodeURIComponent(cat.queryCategory)}` : ""}`}
               key={index}
               className={`rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 p-8 flex flex-col items-center text-center ${cat.bg}`}
             >

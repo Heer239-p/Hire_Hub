@@ -1,8 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getMyApplications, withdrawApplication } from "../../api/applicationApi";
-import ApplicationCard from "../../components/ApplicationCard";
+import { getMyApplications, withdrawApplication } from "../../../services/api/applicationApi";
+
+const ApplicationCard = ({ app, onWithdraw }) => {
+  const { job = {}, status, _id } = app || {};
+  const { title = "No title", company = "Unknown", location = "Unknown", salary = "N/A", jobType = "N/A" } = job;
+
+  return (
+    <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+      <h3 className="text-xl font-semibold">{title}</h3>
+      <p className="text-gray-500">{company} • {location}</p>
+      <p className="text-gray-500">{salary} • {jobType}</p>
+      <p className="mt-2 text-gray-700 font-medium">Status: {status}</p>
+      <button
+        onClick={() => onWithdraw(_id)}
+        className="mt-3 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+      >
+        Withdraw
+      </button>
+    </div>
+  );
+};
 
 const UserApplications = () => {
   const [applications, setApplications] = useState([]);

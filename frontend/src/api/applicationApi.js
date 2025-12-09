@@ -13,10 +13,20 @@ export const getMyApplications = async () => {
 
   const config = { headers: { Authorization: `Bearer ${token}` } };
 
-  const { data } = await api.post("/user/my-applications", {}, config);
+  try {
+    const { data } = await api.post("/user/my-applications", {}, config);
+    // backend sometimes sends result, sometimes data
+    return data.result || data.data || [];
+  } catch (error) {
+    // If backend returns 404 for this endpoint (no applications yet),
+    // treat it as "no data" instead of an error.
+    const status = error.response?.status;
+    if (status === 404) {
+      return [];
+    }
 
-  // backend sometimes sends result, sometimes data
-  return data.result || data.data || [];
+    throw error;
+  }
 };
 
 
