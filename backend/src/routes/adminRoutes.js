@@ -13,7 +13,7 @@ import {
 const router = express.Router();
 
 
-router.post("/users", protect, authorizeRoles("admin","user"), getAllUsers);
+router.post("/users",  getAllUsers);
 
 router.post("/users/get/:id", protect, authorizeRoles("admin","user"), getUserById);
 
