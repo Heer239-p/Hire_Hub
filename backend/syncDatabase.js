@@ -43,7 +43,7 @@ mongoose.connection.once("open", async () => {
       }
     );
 
-    console.log("User collection synced ✅");
+    console.log("User collection synced ");
     
     // =========================
     // COMPANY COLLECTION
@@ -78,7 +78,7 @@ mongoose.connection.once("open", async () => {
       { $set: { logo: null } }
     );
 
-    console.log("Company collection synced ✅");
+    console.log("Company collection synced ");
 
 
     // =========================
@@ -104,7 +104,7 @@ mongoose.connection.once("open", async () => {
       { $set: { deadline: null } }
     );
 
-    console.log("Job collection synced ✅");
+    console.log("Job collection synced ");
 
     // =========================
     // APPLICATION COLLECTION
@@ -119,34 +119,34 @@ mongoose.connection.once("open", async () => {
       { $set: { "employerID.role": "Employer" } }
     );
 
-    console.log("Application collection synced ✅");
+    console.log("Application collection synced ");
 
     // =========================
     // PLAN COLLECTION
     // =========================
     // No changes needed unless you add new fields
     await Plan.init();
-    console.log("Plan collection synced ✅");
+    console.log("Plan collection synced ");
 
     // =========================
     // PAYMENT COLLECTION
     // =========================
     await Payment.init();
-    console.log("Payment collection synced ✅");
+    console.log("Payment collection synced ");
 
     // =========================
     // MESSAGE COLLECTION
     // =========================
     await Message.init();
-    console.log("Message collection synced ✅");
+    console.log("Message collection synced ");
 
     // =========================
     // REVIEW COLLECTION
     // =========================
     await Review.init();
-    console.log("Review collection synced ✅");
+    console.log("Review collection synced ");
 
-    console.log("\n✅ All collections are synced and ready in Compass!");
+    console.log("\n All collections are synced and ready in Compass!");
     process.exit(0);
   } catch (error) {
     console.error("Error syncing collections:", error);
