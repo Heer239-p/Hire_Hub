@@ -12,7 +12,16 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors());
+// Middleware
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? [
+        process.env.FRONTEND_URL,
+        process.env.ADMIN_URL
+      ]
+    : '*',
+  credentials: true
+}));
 app.use(express.json());
 app.use("/uploads", express.static("src/uploads"));
 
