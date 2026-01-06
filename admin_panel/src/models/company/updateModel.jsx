@@ -15,12 +15,12 @@ const UpdateModel = ({ company, onClose, onUpdate }) => {
       <div className="bg-white rounded-2xl p-10 w-full max-w-2xl shadow-xl relative border border-gray-100">
        <h2 className="text-xl font-semibold mb-4 text-gray-800">Edit Company</h2>
         <form onSubmit={handleSubmit} className="space-y-3">
-          {["name", "industry", "website", "description"].map((field) => (
+          {["companyName", "industry", "companyWebsite", "companyDescription"].map((field) => (
             <input
               key={field}
               type="text"
-              placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-              value={form[field]}
+              placeholder={field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
+              value={form[field] || ""}
               onChange={(e) => setForm({ ...form, [field]: e.target.value })}
               className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-400"
             />

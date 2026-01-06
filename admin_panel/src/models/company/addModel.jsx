@@ -7,10 +7,10 @@ const defaultLogo =
 
 const AddModel = ({ onClose, onAdd }) => {
   const [formData, setFormData] = useState({
-    name: "",
+    companyName: "",
     industry: "IT",
-    website: "",
-    description: "",
+    companyWebsite: "",
+    companyDescription: "",
     logo: "", // image or default
   });
 
@@ -71,26 +71,26 @@ const AddModel = ({ onClose, onAdd }) => {
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <input
             type="text"
-            name="name"
+            name="companyName"
             placeholder="Company Name"
-            value={formData.name}
+            value={formData.companyName}
             onChange={handleChange}
             className="border border-gray-300 px-3 py-2 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
             required
           />
           <input
             type="text"
-            name="website"
+            name="companyWebsite"
             placeholder="Website"
-            value={formData.website}
+            value={formData.companyWebsite}
             onChange={handleChange}
             className="border border-gray-300 px-3 py-2 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
           />
           <input
             type="text"
-            name="description"
+            name="companyDescription"
             placeholder="Description"
-            value={formData.description}
+            value={formData.companyDescription}
             onChange={handleChange}
             className="border border-gray-300 px-3 py-2 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
           />

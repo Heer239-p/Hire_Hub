@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Pagination, Select, MenuItem } from "@mui/material";
-import { FiEye, FiEdit, FiTrash2 } from "react-icons/fi";
+import { FiEye, FiTrash2 } from "react-icons/fi";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { CSVLink } from "react-csv";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 import AddModel from "../models/user/addModel";
 import ViewModel from "../models/user/viewModel";
-import UpdateModel from "../models/user/updateModel";
 import DeleteModel from "../models/user/deleteModel";
 
 const UserTable = () => {
@@ -17,10 +19,10 @@ const UserTable = () => {
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedUser, setSelectedUser] = useState(null);
+  const navigate = useNavigate();
 
   const [openAdd, setOpenAdd] = useState(false);
   const [openView, setOpenView] = useState(false);
-  const [openUpdate, setOpenUpdate] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
 
   // ================================
@@ -30,11 +32,40 @@ const UserTable = () => {
     try {
       setLoading(true);
 
+      // Get admin token from localStorage
+      const token = localStorage.getItem("adminToken");
+      
+      // Check if token exists
+      if (!token) {
+        toast.error("No admin token found. Please log in again.");
+        navigate("/login");
+        setLoading(false);
+        return;
+      }
+
       const response = await fetch("http://localhost:5000/api/admin/users", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({})
       });
+
+      // Handle unauthorized access
+      if (response.status === 401) {
+        toast.error("Unauthorized access. Please log in as admin.");
+        navigate("/login");
+        setLoading(false);
+        return;
+      }
+
+      // Handle forbidden access (role mismatch)
+      if (response.status === 403) {
+        toast.error("Access denied. Admin privileges required.");
+        setLoading(false);
+        return;
+      }
 
       const res = await response.json();
 
@@ -53,12 +84,115 @@ const UserTable = () => {
         }));
 
         setUsers(formatted);
+      } else {
+        toast.error(res.message || "Failed to fetch users");
       }
 
       setLoading(false);
     } catch (error) {
       console.error("❌ API Fetch Error:", error);
+      toast.error("Failed to fetch users: " + error.message);
       setLoading(false);
+    }
+  };
+
+  // ================================
+  // ✅ GET USER BY ID
+  // ================================
+  const getUserById = async (id) => {
+    try {
+      // Get admin token from localStorage
+      const token = localStorage.getItem("adminToken");
+      
+      // Check if token exists
+      if (!token) {
+        toast.error("No admin token found. Please log in again.");
+        return null;
+      }
+
+      const response = await fetch(`http://localhost:5000/api/admin/users/get/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      // Handle unauthorized access
+      if (response.status === 401) {
+        toast.error("Unauthorized access. Please log in as admin.");
+        return null;
+      }
+
+      // Handle forbidden access (role mismatch)
+      if (response.status === 403) {
+        toast.error("Access denied. Admin privileges required.");
+        return null;
+      }
+
+      const res = await response.json();
+      
+      if (res.status === "success") {
+        return res.data;
+      } else {
+        toast.error(res.message || "Failed to fetch user details");
+        return null;
+      }
+    } catch (error) {
+      console.error("❌ API Get User Error:", error);
+      toast.error("Failed to fetch user details: " + error.message);
+      return null;
+    }
+  };
+
+  // ================================
+  // ✅ DELETE USER
+  // ================================
+  const deleteUser = async (id) => {
+    try {
+      // Get admin token from localStorage
+      const token = localStorage.getItem("adminToken");
+      
+      // Check if token exists
+      if (!token) {
+        toast.error("No admin token found. Please log in again.");
+        return false;
+      }
+
+      const response = await fetch(`http://localhost:5000/api/admin/users/delete/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      // Handle unauthorized access
+      if (response.status === 401) {
+        toast.error("Unauthorized access. Please log in as admin.");
+        return false;
+      }
+
+      // Handle forbidden access (role mismatch)
+      if (response.status === 403) {
+        toast.error("Access denied. Admin privileges required.");
+        return false;
+      }
+
+      const res = await response.json();
+      
+      if (res.status === "success") {
+        toast.success("User deleted successfully!");
+        fetchApiUsers(); // Refresh the user list
+        return true;
+      } else {
+        toast.error(res.message || "Failed to delete user");
+        return false;
+      }
+    } catch (error) {
+      console.error("❌ API Delete User Error:", error);
+      toast.error("Failed to delete user: " + error.message);
+      return false;
     }
   };
 
@@ -109,8 +243,29 @@ const UserTable = () => {
     "Created At": new Date(u.createdAt).toLocaleDateString(),
   }));
 
+  // ================================
+  // HANDLE DELETE CONFIRMATION
+  // ================================
+  const handleDeleteUser = async (userId) => {
+    const success = await deleteUser(userId);
+    if (success) {
+      setOpenDelete(false);
+    }
+  };
+
   return (
     <div className="p-6 bg-gray-50 dark:bg-gray-950 min-h-screen transition-colors duration-300">
+      <ToastContainer 
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <h1 className="text-3xl font-semibold mb-6 text-gray-800 dark:text-gray-100">Manage Users</h1>
 
       {/* Search & Actions */}
@@ -136,49 +291,47 @@ const UserTable = () => {
 
       {/* Table */}
       <div className="overflow-x-auto rounded-lg shadow">
-        <table className="w-full bg-white dark:bg-gray-800 text-sm">
+        <table className="w-full bg-white dark:bg-gray-800 text-sm border border-gray-300">
           <thead className="bg-blue-600 text-white">
             <tr>
-              <th className="p-3">First Name</th>
-              <th className="p-3">Last Name</th>
-              <th className="p-3">Profile</th>
-              <th className="p-3">Email</th>
-              <th className="p-3">Phone</th>
-              <th className="p-3">Role</th>
-              <th className="p-3">Actions</th>
+              <th className="p-3 text-center">Profile</th>
+              <th className="p-3 text-center">First Name</th>
+              <th className="p-3 text-center">Last Name</th>
+              <th className="p-3 text-center">Email</th>
+              <th className="p-3 text-center">Phone</th>
+              <th className="p-3 text-center">Role</th>
+              <th className="p-3 text-center">Actions</th>
             </tr>
           </thead>
 
           <tbody>
             {paginatedUsers.length ? (
               paginatedUsers.map((user) => (
-                <tr key={user.id} className="border-b hover:bg-gray-100 dark:hover:bg-gray-700">
-                  <td className="p-3">{user.first_name}</td>
-                  <td className="p-3">{user.last_name}</td>
-
-                  <td className="p-3">
+                <tr key={user.id} className="border-b border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <td className="p-3 text-center">
                     {user.profile ? (
                       <img
                         src={user.profile}
                         alt="profile"
-                        className="w-10 h-10 rounded-full border object-cover"
+                        className="w-10 h-10 rounded-full border object-cover mx-auto"
                       />
                     ) : (
-                      <span className="text-gray-400">No Image</span>
+                      <img
+                        src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png"
+                        alt="default profile"
+                        className="w-10 h-10 rounded-full border object-cover mx-auto"
+                      />
                     )}
                   </td>
+                  <td className="p-3 text-center">{user.first_name}</td>
+                  <td className="p-3 text-center">{user.last_name}</td>
+                  <td className="p-3 text-center">{user.email}</td>
+                  <td className="p-3 text-center">{user.phone}</td>
+                  <td className="p-3 text-center">{user.role}</td>
 
-                  <td className="p-3">{user.email}</td>
-                  <td className="p-3">{user.phone}</td>
-                  <td className="p-3">{user.role}</td>
-
-                  <td className="p-3 flex gap-3">
+                  <td className="p-3 flex justify-center gap-3">
                     <button onClick={() => { setSelectedUser(user); setOpenView(true); }}>
                       <FiEye className="text-blue-500" />
-                    </button>
-
-                    <button onClick={() => { setSelectedUser(user); setOpenUpdate(true); }}>
-                      <FiEdit className="text-green-500" />
                     </button>
 
                     <button onClick={() => { setSelectedUser(user); setOpenDelete(true); }}>
@@ -221,8 +374,13 @@ const UserTable = () => {
       {/* Modals */}
       {openAdd && <AddModel onClose={() => setOpenAdd(false)} />}
       {openView && <ViewModel user={selectedUser} onClose={() => setOpenView(false)} />}
-      {openUpdate && <UpdateModel user={selectedUser} onClose={() => setOpenUpdate(false)} />}
-      {openDelete && <DeleteModel user={selectedUser} onClose={() => setOpenDelete(false)} />}
+      {openDelete && (
+        <DeleteModel 
+          user={selectedUser} 
+          onClose={() => setOpenDelete(false)} 
+          onDelete={handleDeleteUser}
+        />
+      )}
     </div>
   );
 };

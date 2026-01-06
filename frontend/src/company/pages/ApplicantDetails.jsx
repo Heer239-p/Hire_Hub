@@ -1,51 +1,93 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { FiDownload, FiMail, FiPhone, FiMapPin, FiCalendar, FiBriefcase, FiUser } from "react-icons/fi";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { getApplicationDetails, updateApplicationStatus } from "../../api/applicationApi";
 
 const ApplicantDetails = () => {
-  const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const [applicant, setApplicant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Mock data - Replace with actual API call
+  // Get application data from location state or fetch from API
+  const applicationData = location.state?.applicationData || location.state?.application;
+
+  // Fetch application details when component mounts
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setApplicant({
-        _id: id,
-        name: "Ishaan Shah",
-        email: "ishaan.shah@example.com",
-        mobile: "+91 98765 43210",
-        profileImage: null,
-        location: "Mumbai, Maharashtra",
-        experience: "4 years",
-        skills: ["React", "Next.js", "TypeScript", "Node.js", "MongoDB"],
-        education: "B.Tech in Computer Science - IIT Mumbai (2020)",
-        coverLetter: "I am excited to apply for the Frontend Developer position. With 4 years of experience in React and modern web development, I have built scalable applications for fintech and e-commerce companies. I'm passionate about creating intuitive user experiences and am eager to contribute to your team.",
-        resume: "/resumes/ishaan_shah_resume.pdf",
-        status: "Interview",
-        appliedDate: "2024-01-15",
-        jobTitle: "Frontend Developer",
-        jobCompany: "Tech Innovations Pvt Ltd",
-        jobLocation: "Mumbai",
-        jobType: "Full-Time",
-      });
-      setLoading(false);
-    }, 800);
-  }, [id]);
+    const fetchApplicationDetails = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Get application ID from location state or URL params
+        const applicationId = applicationData?._id || location.state?.applicationId;
+        
+        if (!applicationId) {
+          setError("No application ID provided");
+          setLoading(false);
+          return;
+        }
+        
+        const data = await getApplicationDetails(applicationId);
+        
+        // Transform the data to match the expected structure
+        const transformedData = {
+          _id: data._id,
+          name: `${data.applicant.firstName} ${data.applicant.lastName}`,
+          email: data.applicant.email,
+          mobile: data.applicant.mobile,
+          profileImage: data.applicant.profileImage,
+          location: data.applicant.location || "Not specified",
+          experience: data.applicant.experienceYears 
+            ? `${data.applicant.experienceYears} years` 
+            : "Not specified",
+          skills: Array.isArray(data.applicant.skills) 
+            ? data.applicant.skills 
+            : typeof data.applicant.skills === 'string'
+            ? data.applicant.skills.split(',').map(skill => skill.trim()).filter(skill => skill)
+            : [],
+          education: "Education details not provided",
+          coverLetter: data.coverLetter || "No cover letter provided",
+          resume: data.resume,
+          status: data.status,
+          appliedDate: data.createdAt,
+          jobTitle: data.job?.title || "Not specified",
+          jobCompany: data.job?.company || "Not specified",
+          jobLocation: data.job?.location || "Not specified",
+          jobType: data.job?.jobType || "Not specified",
+        };
+        
+        setApplicant(transformedData);
+      } catch (err) {
+        console.error("Error fetching application details:", err);
+        setError("Failed to load applicant details. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchApplicationDetails();
+  }, [applicationData, location.state]);
 
   const handleStatusUpdate = async (newStatus) => {
     setUpdating(true);
     try {
-      // TODO: Connect with backend API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setApplicant((prev) => ({ ...prev, status: newStatus }));
+      const applicationId = applicant._id;
+      const updatedApplication = await updateApplicationStatus(applicationId, newStatus);
+      
+      // Update local state with new status
+      setApplicant(prev => ({
+        ...prev,
+        status: updatedApplication.status
+      }));
+      
       toast.success(`Status updated to ${newStatus}`);
     } catch (error) {
+      console.error("Error updating status:", error);
       toast.error("Failed to update status");
     } finally {
       setUpdating(false);
@@ -53,30 +95,49 @@ const ApplicantDetails = () => {
   };
 
   const handleDownloadResume = () => {
-    // TODO: Implement actual resume download
-    toast.info("Resume download initiated");
-    window.open(applicant.resume, "_blank");
+    if (applicant?.resume) {
+      // Create full URL for resume
+      const resumeUrl = `http://localhost:5000/uploads/${applicant.resume}`;
+      window.open(resumeUrl, "_blank");
+    } else {
+      toast.info("No resume available for download");
+    }
   };
 
   const statusOptions = [
+    { label: "Applied", value: "Applied", color: "bg-blue-100 text-blue-700" },
+    { label: "Reviewed", value: "Reviewed", color: "bg-purple-100 text-purple-700" },
     { label: "Shortlisted", value: "Shortlisted", color: "bg-amber-100 text-amber-700" },
-    { label: "Interview", value: "Interview", color: "bg-green-100 text-green-700" },
     { label: "Rejected", value: "Rejected", color: "bg-red-100 text-red-700" },
-    { label: "Hired", value: "Hired", color: "bg-blue-100 text-blue-700" },
+    { label: "Hired", value: "Hired", color: "bg-green-100 text-green-700" },
   ];
 
   const currentStatusColor = {
-    Applied: "bg-slate-100 text-slate-700",
+    Applied: "bg-blue-100 text-blue-700",
+    Reviewed: "bg-purple-100 text-purple-700",
     Shortlisted: "bg-amber-100 text-amber-700",
-    Interview: "bg-green-100 text-green-700",
     Rejected: "bg-red-100 text-red-700",
-    Hired: "bg-blue-100 text-blue-700",
+    Hired: "bg-green-100 text-green-700",
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-32">
         <p className="text-slate-500 text-lg font-semibold animate-pulse">Loading applicant details...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-32">
+        <p className="text-red-500 text-lg font-semibold">{error}</p>
+        <button
+          onClick={() => navigate("/company/applicants")}
+          className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-500"
+        >
+          Back to Applicants
+        </button>
       </div>
     );
   }
@@ -143,7 +204,7 @@ const ApplicantDetails = () => {
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <FiPhone className="text-slate-400" />
-                <span className="text-slate-700">{applicant.mobile}</span>
+                <span className="text-slate-700">{applicant.mobile || "Not provided"}</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <FiMapPin className="text-slate-400" />
@@ -221,14 +282,18 @@ const ApplicantDetails = () => {
           <div className="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm">
             <h3 className="text-lg font-semibold text-slate-900 mb-4">Skills</h3>
             <div className="flex flex-wrap gap-2">
-              {applicant.skills.map((skill) => (
-                <span
-                  key={skill}
-                  className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-semibold"
-                >
-                  {skill}
-                </span>
-              ))}
+              {applicant.skills && applicant.skills.length > 0 ? (
+                applicant.skills.map((skill, index) => (
+                  <span
+                    key={index}
+                    className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-semibold"
+                  >
+                    {skill}
+                  </span>
+                ))
+              ) : (
+                <p className="text-slate-500">No skills provided</p>
+              )}
             </div>
           </div>
 
@@ -244,5 +309,3 @@ const ApplicantDetails = () => {
 };
 
 export default ApplicantDetails;
-
-

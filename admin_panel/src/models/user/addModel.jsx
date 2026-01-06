@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FiCamera } from "react-icons/fi";
+import { toast } from "react-toastify";
 
 const categories = ["IT", "Design", "QA", "Management"];
 const defaultProfile =
@@ -32,12 +33,20 @@ const AddModel = ({ onClose, onAdd }) => {
   const handleSubmit = async () => {
     // Basic validation
     if (!formData.first_name || !formData.last_name || !formData.email || !formData.phone) {
-      alert("Please fill in all required fields");
+      toast.error("Please fill in all required fields");
       return;
     }
-    await onAdd(formData);
-    console.log("User added:", formData);
-    onClose();
+
+    try {
+      // In a real implementation, you would send this data to your backend API
+      // For now, we'll just call the onAdd callback
+      await onAdd(formData);
+      toast.success("User added successfully!");
+      onClose();
+    } catch (error) {
+      console.error("Error adding user:", error);
+      toast.error("Failed to add user");
+    }
   };
 
   return (

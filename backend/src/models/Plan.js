@@ -7,7 +7,7 @@ const planSchema = new mongoose.Schema(
     price: { type: Number, required: true },
     jobLimit: { type: Number, required: true },
     featuredJobLimit: { type: Number, default: 0 },
-    durationInDays: { type: Number, required: true },
+    isPerJobPosting: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

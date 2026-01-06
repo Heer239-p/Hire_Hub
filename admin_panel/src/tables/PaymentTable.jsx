@@ -4,50 +4,68 @@ import { FiEye, FiDownload, FiPlus } from "react-icons/fi";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { CSVLink } from "react-csv";
+import { fetchAllPayments } from "../services/paymentService";
 
 const PaymentTable = () => {
-  // Load payments from localStorage or use default
-  const storedPayments = JSON.parse(localStorage.getItem("payments")) || [
-    {
-      id: 1,
-      transactionId: "TXN001",
-      userName: "John Doe",
-      amount: 5000,
-      date: "2025-10-01",
-      status: "Completed",
-      method: "Credit Card",
-    },
-    {
-      id: 2,
-      transactionId: "TXN002",
-      userName: "Jane Smith",
-      amount: 3500,
-      date: "2025-10-05",
-      status: "Pending",
-      method: "PayPal",
-    },
-    {
-      id: 3,
-      transactionId: "TXN003",
-      userName: "Mike Johnson",
-      amount: 7500,
-      date: "2025-10-08",
-      status: "Completed",
-      method: "Bank Transfer",
-    },
-  ];
-
-  const [payments, setPayments] = useState(storedPayments);
+  const [payments, setPayments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [refreshFlag, setRefreshFlag] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [openView, setOpenView] = useState(false);
 
-  // Persist payments to localStorage
+  // Fetch payments from API
   useEffect(() => {
-    localStorage.setItem("payments", JSON.stringify(payments));
-  }, [payments]);
+    const loadPayments = async () => {
+      try {
+        setLoading(true);
+        const paymentData = await fetchAllPayments();
+        setPayments(paymentData);
+        setError(null);
+      } catch (err) {
+        console.error("Failed to load payments:", err);
+        setError("Failed to load payments. Please try again later.");
+        // Fallback to localStorage or default data if API fails
+        const storedPayments = JSON.parse(localStorage.getItem("payments")) || [
+          {
+            id: 1,
+            transactionId: "TXN001",
+            userName: "John Doe",
+            amount: 5000,
+            date: "2025-10-01",
+            status: "Completed",
+            method: "Credit Card",
+          },
+          {
+            id: 2,
+            transactionId: "TXN002",
+            userName: "Jane Smith",
+            amount: 3500,
+            date: "2025-10-05",
+            status: "Pending",
+            method: "PayPal",
+          },
+          {
+            id: 3,
+            transactionId: "TXN003",
+            userName: "Mike Johnson",
+            amount: 7500,
+            date: "2025-10-08",
+            status: "Completed",
+            method: "Bank Transfer",
+          },
+        ];
+        setPayments(storedPayments);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPayments();
+  }, [refreshFlag]);
 
   // Filter and paginate payments
   const filteredPayments = payments.filter(
@@ -57,6 +75,29 @@ const PaymentTable = () => {
       payment.method.toLowerCase().includes(searchTerm.toLowerCase()) ||
       payment.status.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Show loading or error state
+  if (loading) {
+    return (
+      <div className="p-6 bg-gray-50 dark:bg-gray-950 min-h-screen transition-colors duration-300">
+        <h1 className="text-3xl font-semibold mb-6 text-gray-800 dark:text-gray-100">Manage Payments</h1>
+        <div className="flex justify-center items-center h-64">
+          <div className="text-lg text-gray-600 dark:text-gray-400">Loading payments...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 bg-gray-50 dark:bg-gray-950 min-h-screen transition-colors duration-300">
+        <h1 className="text-3xl font-semibold mb-6 text-gray-800 dark:text-gray-100">Manage Payments</h1>
+        <div className="flex justify-center items-center h-64">
+          <div className="text-lg text-red-600 dark:text-red-400">{error}</div>
+        </div>
+      </div>
+    );
+  }
 
   const totalPages = Math.ceil(filteredPayments.length / rowsPerPage);
   const paginatedPayments = filteredPayments.slice(
@@ -191,6 +232,13 @@ const PaymentTable = () => {
         />
 
         <div className="flex items-center space-x-2">
+          {/* <button
+            onClick={() => setRefreshFlag(!refreshFlag)}
+            className="bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow"
+            disabled={loading}
+          >
+            {loading ? "Refreshing..." : "Refresh"}
+          </button> */}
           <button
             onClick={exportPDF}
             className="bg-green-500 dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow"

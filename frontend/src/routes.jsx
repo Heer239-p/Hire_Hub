@@ -19,10 +19,12 @@ import ManageJobs from "./company/pages/ManageJobs";
 import PostJob from "./company/pages/PostJob";
 import Applicants from "./company/pages/Applicants";
 import ApplicantDetails from "./company/pages/ApplicantDetails";
-import Profile from "./company/pages/Profile";
+import CompanyProfile from "./company/pages/Profile";
+import JobseekerProfile from "./jobseekers/pages/Profile";
 import Subscription from "./company/pages/Subscription";
-
-const AppRoutes = () => {
+import PaymentSuccess from "./company/pages/PaymentSuccess";
+import PayPalSuccess from "./company/pages/PayPalSuccess";
+import TestToast from "./test-toast";const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
@@ -55,7 +57,7 @@ const AppRoutes = () => {
           path="profile"
           element={
             <ProtectedRoute>
-              <Profile />
+              <JobseekerProfile />
             </ProtectedRoute>
           }
         />
@@ -64,6 +66,7 @@ const AppRoutes = () => {
         <Route path="signup" element={<Register />} />
         <Route path="categories" element={<Categories />} />
         <Route path="browse-jobs" element={<BrowseJobs />} />
+        <Route path="test-toast" element={<TestToast />} />
       </Route>
       <Route
         path="/company"
@@ -78,9 +81,12 @@ const AppRoutes = () => {
         <Route path="post-job" element={<PostJob />} />
         <Route path="manage-jobs" element={<ManageJobs />} />
         <Route path="applicants" element={<Applicants />} />
+        <Route path="applicants/:jobId" element={<Applicants />} />
         <Route path="applicant-details" element={<ApplicantDetails />} />
-        <Route path="profile" element={<Profile />} />
+        <Route path="profile" element={<CompanyProfile />} />
         <Route path="subscription" element={<Subscription />} />
+        <Route path="payment-success" element={<PaymentSuccess />} />
+        <Route path="paypal-success" element={<PayPalSuccess />} />
       </Route>
     </Routes>
   );

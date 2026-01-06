@@ -93,9 +93,9 @@ const navItems = [
   { label: 'Users', path: '/users', icon: FiUsers },
   { label: 'Companies', path: '/companies', icon: FiArchive },
   { label: 'Jobs', path: '/jobs', icon: FiBriefcase },
-  { label: "Employers", path: "/employers", icon: FiUserPlus },
+  
   { label: 'Applications', path: '/applications', icon: FiFileText },
-  { label: 'Categories', path: '/categories', icon: FiTag },
+  // { label: 'Categories', path: '/categories', icon: FiTag },
   { label: 'Payment', path: '/payment', icon: FiCreditCard },
   { label: 'Reviews', path: '/reviews', icon: FiStar },
 ];

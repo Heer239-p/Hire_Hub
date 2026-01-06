@@ -29,7 +29,6 @@ export const getMyApplications = async () => {
   }
 };
 
-
 export const withdrawApplication = async (applicationId) => {
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const token = userInfo?.token;
@@ -45,3 +44,86 @@ export const withdrawApplication = async (applicationId) => {
   return data;
 };
 
+// Apply for a job
+export const applyJob = async (jobId, formData) => {
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const token = userInfo?.token;
+  if (!token) throw new Error("No token found, login required");
+
+  const config = {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      "Authorization": `Bearer ${token}`,
+    },
+  };
+
+  const { data } = await api.post(`/user/${jobId}/apply`, formData, config);
+  return data;
+};
+
+// Get applicants for a specific job (Employer only)
+export const getApplicantsForJob = async (jobId) => {
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const token = userInfo?.token;
+  if (!token) throw new Error("No token found, login required");
+
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    const response = await api.get(`/jobs/${jobId}/applicants`, config);
+    return response.data.result || [];
+  } catch (error) {
+    console.error("Error fetching applicants:", error);
+    throw error;
+  }
+};
+
+// Get detailed application info (Employer only)
+export const getApplicationDetails = async (applicationId) => {
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const token = userInfo?.token;
+  if (!token) throw new Error("No token found, login required");
+
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    const response = await api.get(`/jobs/applications/${applicationId}`, config);
+    return response.data.result;
+  } catch (error) {
+    console.error("Error fetching application details:", error);
+    throw error;
+  }
+};
+
+// Update application status (Employer/Admin only)
+export const updateApplicationStatus = async (applicationId, status) => {
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const token = userInfo?.token;
+  if (!token) throw new Error("No token found, login required");
+
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    const response = await api.post(
+      `/jobs/applications/${applicationId}/status`,
+      { status },
+      config
+    );
+    return response.data.result;
+  } catch (error) {
+    console.error("Error updating application status:", error);
+    throw error;
+  }
+};

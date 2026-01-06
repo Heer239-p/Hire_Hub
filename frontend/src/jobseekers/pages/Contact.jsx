@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { sendContactMessage } from "../../api/contactApi";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -15,7 +16,7 @@ const Contact = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.name || !formData.email || !formData.message || !formData.rating) {
@@ -23,22 +24,25 @@ const Contact = () => {
       return;
     }
 
-    // Get existing reviews from localStorage
-    const existingReviews = JSON.parse(localStorage.getItem("userReviews")) || [];
+    try {
+      // Submit contact message to backend
+      const response = await sendContactMessage({
+        name: formData.name,
+        email: formData.email,
+        message: formData.message,
+        rating: parseInt(formData.rating),
+      });
 
-    // Add new review
-    const newReview = {
-      name: formData.name,
-      role: "User", // you can make dynamic if needed
-      rating: parseInt(formData.rating),
-      comment: formData.message,
-    };
-
-    localStorage.setItem("userReviews", JSON.stringify([...existingReviews, newReview]));
-    toast.success("Your review has been submitted!");
-
-    // Reset form
-    setFormData({ name: "", email: "", message: "", rating: "" });
+      if (response.status === "success") {
+        toast.success("Your message has been sent successfully!");
+        // Reset form
+        setFormData({ name: "", email: "", message: "", rating: "" });
+      } else {
+        toast.error(response.message || "Failed to send message");
+      }
+    } catch (error) {
+      toast.error(error.message || "Failed to send message");
+    }
   };
 
   return (

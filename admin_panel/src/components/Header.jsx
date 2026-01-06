@@ -55,7 +55,7 @@ const Header = ({ onToggleSidebar }) => {
       <div className="flex items-center gap-4 relative">
         {/* Notifications */}
         <div className="relative">
-          <button
+          {/* <button
             onClick={() => setShowNotifications(!showNotifications)}
             className="relative focus:outline-none"
           >
@@ -65,7 +65,7 @@ const Header = ({ onToggleSidebar }) => {
               </span>
             )}
             <FiBell className="text-xl text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" />
-          </button>
+          </button> */}
 
           {showNotifications && (
             <div className="absolute right-0 mt-3 w-72 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-3 z-50">

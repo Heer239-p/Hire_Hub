@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const loginAdmin = async (email, password) => {
   const { data } = await axios.post(
-    "http://localhost:5000/api/auth/login",
+    "http://localhost:5000/api/auth/admin-login",
     { email, password }
   );
 

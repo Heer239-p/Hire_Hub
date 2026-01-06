@@ -51,9 +51,11 @@ const UpdateModel = ({ user, onClose, onUpdate }) => {
                 className="w-28 h-28 object-cover rounded-full border-2 border-gray-300"
               />
             ) : (
-              <div className="w-28 h-28 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-400">
-                Upload
-              </div>
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png"
+                alt="Default Profile"
+                className="w-28 h-28 object-cover rounded-full border-2 border-gray-300"
+              />
             )}
             {/* Camera Icon */}
             <div className="absolute bottom-0 right-0 bg-blue-500 w-8 h-8 rounded-full flex items-center justify-center text-white border-2 border-white">

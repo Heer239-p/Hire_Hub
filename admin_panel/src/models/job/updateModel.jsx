@@ -32,6 +32,15 @@ const UpdateModel = ({ job, onClose, onUpdate }) => {
             className="border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-blue-400"
           />
 
+          {/* Description */}
+          <input
+            name="description"
+            placeholder="Description"
+            value={jobData.description || ""}
+            onChange={handleChange}
+            className="border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-blue-400"
+          />
+
           {/* Company */}
           <input
             name="company"
@@ -63,10 +72,10 @@ const UpdateModel = ({ job, onClose, onUpdate }) => {
             className="border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-blue-400"
           />
 
-          {/* Type */}
+          {/* Job Type */}
           <select
-            name="type"
-            value={jobData.type}
+            name="jobType"
+            value={jobData.jobType || "Full-time"}
             onChange={handleChange}
             className="border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-blue-400"
           >
@@ -74,6 +83,15 @@ const UpdateModel = ({ job, onClose, onUpdate }) => {
             <option value="Part-time">Part-time</option>
             <option value="Contract">Contract</option>
           </select>
+
+          {/* Salary */}
+          <input
+            name="salary"
+            placeholder="Salary"
+            value={jobData.salary || ""}
+            onChange={handleChange}
+            className="border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-blue-400"
+          />
 
           {/* Status */}
           <select
@@ -86,29 +104,15 @@ const UpdateModel = ({ job, onClose, onUpdate }) => {
             <option value="Closed">Closed</option>
           </select>
 
-          {/* Posted Date */}
-          <div className="flex flex-col">
-            <label className="text-gray-500 text-sm mb-1">Posted Date</label>
-            <input
-              type="date"
-              name="postedDate"
-              value={jobData.postedDate}
-              onChange={handleChange}
-              className="border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-blue-400"
-            />
-          </div>
-
-          {/* Expiry Date */}
-          <div className="flex flex-col">
-            <label className="text-gray-500 text-sm mb-1">Expiry Date</label>
-            <input
-              type="date"
-              name="expiryDate"
-              value={jobData.expiryDate}
-              onChange={handleChange}
-              className="border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-blue-400"
-            />
-          </div>
+          {/* Applicants */}
+          <input
+            type="number"
+            name="applicants"
+            placeholder="Applicants"
+            value={jobData.applicants || 0}
+            onChange={handleChange}
+            className="border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-blue-400"
+          />
 
           {/* Action Buttons - full width */}
           <div className="col-span-1 md:col-span-2 flex justify-end gap-3 mt-4">

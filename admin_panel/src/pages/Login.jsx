@@ -25,7 +25,11 @@ const Login = () => {
       }
     } catch (error) {
       console.log(error);
-      alert("Invalid email or password");
+      if (error.response && error.response.data && error.response.data.message) {
+        alert(error.response.data.message);
+      } else {
+        alert("Invalid email or password");
+      }
     }
   };
 

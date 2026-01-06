@@ -8,30 +8,25 @@ const ViewModel = ({ company, onClose }) => {
       <div className="bg-white rounded-2xl p-10 w-full max-w-2xl shadow-xl relative border border-gray-100">
         <h2 className="text-xl font-semibold mb-4 text-gray-800">View Company</h2>
 
-        {/* Profile Image */}
-        <div className="flex justify-center mb-4">
-          <img
-            src={company.logo}
-            alt={company.name}
-            className="w-24 h-24 rounded-full border border-gray-300"
-          />
-        </div>
-
         <div className="space-y-2">
-          <p><strong>Name:</strong> {company.name}</p>
-          <p><strong>Industry:</strong> {company.industry}</p>
+          <p><strong>Company Name:</strong> {company.companyName || "N/A"}</p>
+          <p><strong>Industry:</strong> {company.industry || "N/A"}</p>
           <p>
             <strong>Website:</strong>{" "}
-            <a
-              href={company.website}
-              target="_blank"
-              rel="noreferrer"
-              className="text-blue-500"
-            >
-              {company.website}
-            </a>
+            {company.companyWebsite ? (
+              <a
+                href={company.companyWebsite}
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-500"
+              >
+                {company.companyWebsite}
+              </a>
+            ) : (
+              "N/A"
+            )}
           </p>
-          <p><strong>Description:</strong> {company.description}</p>
+          <p><strong>Description:</strong> {company.companyDescription || "N/A"}</p>
         </div>
 
         <div className="mt-5 flex justify-end">

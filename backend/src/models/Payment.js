@@ -10,7 +10,7 @@ const paymentSchema = new mongoose.Schema(
     job: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Job",
-      required: true,
+      default: null,
     },
     amount: {
       type: Number,
@@ -18,8 +18,8 @@ const paymentSchema = new mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ["GooglePay", "UPI", "Card", "NetBanking"],
-      default: "GooglePay",
+      enum: ["GooglePay", "UPI", "Card", "NetBanking", "PayPal"],
+      default: "PayPal",
     },
     transactionId: {
       type: String,
@@ -29,7 +29,7 @@ const paymentSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["Success", "Failed", "Pending"],
-      default: "Pending",
+      default: "Success",
     },
   },
   { timestamps: true }

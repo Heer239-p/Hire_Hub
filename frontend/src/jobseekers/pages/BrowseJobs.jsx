@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { getAllJobs } from "../../api/jobApi";
+import { applyJob } from "../../services/api/applicationApi"; // Import the applyJob API function
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -138,19 +140,39 @@ const [viewJob, setViewJob] = useState(null);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    toast.success("🎉 Application Submitted Successfully!", {
-      position: "bottom-right",
-      autoClose: 3000,
-      style: { background: "#2563eb", color: "#fff" },
-    });
+    // Create FormData and call the API
+    const fd = new FormData();
+    fd.append("resume", formData.resume);
+    fd.append("coverLetter", formData.coverLetter);
 
-    setSelectedJob(null);
-    setFormData({ name: "", email: "", resume: null, coverLetter: "" });
-    setErrors({});
+    try {
+      const data = await applyJob(selectedJob._id, fd);
+      
+      if (data.status === "success") {
+        toast.success("🎉 Application Submitted Successfully!", {
+          position: "bottom-right",
+          autoClose: 3000,
+          style: { background: "#2563eb", color: "#fff" },
+        });
+        
+        setSelectedJob(null);
+        setFormData({ name: "", email: "", resume: null, coverLetter: "" });
+        setErrors({});
+      } else {
+        toast.error(data.message || "Failed to apply!", {
+          position: "bottom-right"
+        });
+      }
+    } catch (error) {
+      toast.error(error.message || "Server error! Try again.", {
+        position: "bottom-right"
+      });
+      console.log(error);
+    }
   };
 
   return (

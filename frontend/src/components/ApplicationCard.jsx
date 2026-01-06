@@ -13,9 +13,17 @@ const ApplicationCard = ({ app, onWithdraw }) => {
         return "bg-green-50 text-green-700 border-green-200";
       case "Rejected":
         return "bg-red-50 text-red-700 border-red-200";
+      case "Hired":
+        return "bg-green-100 text-green-800 border-green-200";
       default:
         return "bg-gray-50 text-gray-700 border-gray-200";
     }
+  };
+
+  // Format date
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString();
   };
 
   return (
@@ -29,7 +37,6 @@ const ApplicationCard = ({ app, onWithdraw }) => {
             className="w-full h-48 object-cover rounded-xl mb-4 shadow-sm"
           />
         )}
-
         <h3 className="text-2xl font-bold text-gray-900 mb-1 line-clamp-2">
           {job.title}
         </h3>
@@ -66,14 +73,12 @@ const ApplicationCard = ({ app, onWithdraw }) => {
           </span>
         </div>
 
-        {app.appliedAt && (
-          <div className="flex items-center justify-between gap-3">
-            <span className="text-gray-500">Applied on</span>
-            <span className="text-gray-800 font-medium">
-              {new Date(app.appliedAt).toLocaleDateString()}
-            </span>
-          </div>
-        )}
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-gray-500">Applied on</span>
+          <span className="text-gray-800 font-medium">
+            {formatDate(app.createdAt)}
+          </span>
+        </div>
 
         {app.email && (
           <div className="flex items-center justify-between gap-3">
@@ -95,7 +100,7 @@ const ApplicationCard = ({ app, onWithdraw }) => {
           <div className="flex items-center justify-between gap-3 pt-1">
             <span className="text-gray-500">Resume</span>
             <a
-              href={`/uploads/${app.resume}`}
+              href={`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/uploads/${app.resume}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:text-blue-700 hover:underline text-sm font-medium"

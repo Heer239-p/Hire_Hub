@@ -3,77 +3,52 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { CSVLink } from "react-csv";
 import { Pagination, Select, MenuItem } from "@mui/material";
-import { FiEye, FiTrash2, FiEdit, FiPlus } from "react-icons/fi";
-import RecentActivity, { addActivity, getActivities } from "../pages/recentActivity";
-import AddModel from "../models/application/addModel";
-import ViewModel from "../models/application/viewModel";
-import UpdateModel from "../models/application/updateModel";
-import DeleteModel from "../models/application/deleteModel";
+import { fetchApplications } from "../api/applicationApi";
 
 const ApplicationTable = () => {
-  const [applications, setApplications] = useState(() => {
-    const saved = localStorage.getItem("applications");
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  const [recentActivities, setRecentActivities] = useState(getActivities());
+  const [applications, setApplications] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [selectedApplication, setSelectedApplication] = useState(null);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const [openAdd, setOpenAdd] = useState(false);
-  const [openView, setOpenView] = useState(false);
-  const [openUpdate, setOpenUpdate] = useState(false);
-  const [openDelete, setOpenDelete] = useState(false);
-
-  // Sync applications to localStorage whenever they change
+  // Fetch applications from API
   useEffect(() => {
-    localStorage.setItem("applications", JSON.stringify(applications));
-  }, [applications]);
+    loadApplications();
+  }, [page, searchTerm]);
 
-  // Add Application
-  const handleAddApplication = (newApplication) => {
-    const addedApp = { id: Date.now(), appliedDate: new Date().toLocaleDateString(), ...newApplication };
-    setApplications([...applications, addedApp]);
-
-    // Update Recent Activity
-    const updated = addActivity("Added", "Application", newApplication.jobTitle);
-    setRecentActivities(updated);
+  const loadApplications = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetchApplications(page, rowsPerPage, searchTerm);
+      setApplications(response.applications);
+      setTotalPages(response.totalPages || 1);
+      // Update current page if it's different
+      if (response.currentPage && response.currentPage !== page) {
+        setPage(response.currentPage);
+      }
+    } catch (err) {
+      console.error("Failed to load applications:", err);
+      setError("Failed to load applications. Showing local data.");
+      // Fallback to localStorage if API fails
+      const saved = localStorage.getItem("applications");
+      if (saved) {
+        setApplications(JSON.parse(saved));
+        setTotalPages(1); // Reset pagination for localStorage data
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Update Application
-  const handleUpdateApplication = (updatedApplication) => {
-    setApplications(
-      applications.map((a) => (a.id === updatedApplication.id ? updatedApplication : a))
-    );
+  // All actions have been removed as per requirements
 
-    const updated = addActivity("Updated", "Application", updatedApplication.jobTitle);
-    setRecentActivities(updated);
-  };
-
-  // Delete Application
-  const handleDeleteApplication = (id) => {
-    const deletedApp = applications.find((a) => a.id === id);
-    setApplications(applications.filter((a) => a.id !== id));
-
-    const updated = addActivity("Deleted", "Application", deletedApp.jobTitle);
-    setRecentActivities(updated);
-  };
-
-  // Filtered & paginated applications
-  const filteredApplications = applications.filter((a) =>
-    a.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    a.applicant.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    a.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const totalPages = Math.ceil(filteredApplications.length / rowsPerPage);
-  const displayedApplications = filteredApplications.slice(
-    (page - 1) * rowsPerPage,
-    page * rowsPerPage
-  );
+  // Displayed applications (already paginated by server)
+  const displayedApplications = applications;
 
   // Export PDF
   const exportPDF = () => {
@@ -114,12 +89,6 @@ const ApplicationTable = () => {
         />
         <div className="flex items-center space-x-2">
           <button
-            onClick={() => setOpenAdd(true)}
-            className="flex items-center bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow"
-          >
-            <FiPlus className="mr-2" size={18} /> Add Application
-          </button>
-          <button
             onClick={exportPDF}
             className="bg-green-500 dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow"
           >
@@ -140,13 +109,25 @@ const ApplicationTable = () => {
         <table className="w-full bg-white dark:bg-gray-800 text-sm border-t border-gray-300 dark:border-gray-700 border-collapse">
           <thead className="bg-blue-500 dark:bg-blue-700 text-white uppercase text-sm">
             <tr>
-              {["Job Title", "Applicant", "Email", "Status", "Applied On", "Actions"].map(
+              {["Job Title", "Applicant", "Email", "Status", "Applied On"].map(
                 (head) => <th key={head} className="p-3 text-left font-semibold">{head}</th>
               )}
             </tr>
           </thead>
           <tbody>
-            {displayedApplications.length ? (
+            {loading ? (
+              <tr>
+                <td colSpan="5" className="text-center p-5 text-gray-500 border-t border-gray-300">
+                  Loading applications...
+                </td>
+              </tr>
+            ) : error ? (
+              <tr>
+                <td colSpan="5" className="text-center p-5 text-red-500 border-t border-gray-300">
+                  {error}
+                </td>
+              </tr>
+            ) : displayedApplications.length ? (
               displayedApplications.map((a) => (
                 <tr key={a.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                   <td className="p-3 text-gray-900 dark:text-gray-100">{a.jobTitle}</td>
@@ -154,31 +135,11 @@ const ApplicationTable = () => {
                   <td className="p-3 text-gray-900 dark:text-gray-100">{a.email}</td>
                   <td className="p-3 text-gray-900 dark:text-gray-100">{a.status}</td>
                   <td className="p-3 text-gray-900 dark:text-gray-100">{a.appliedDate}</td>
-                  <td className="p-3 flex items-center space-x-3">
-                    <button
-                      className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
-                      onClick={() => { setSelectedApplication(a); setOpenView(true); }}
-                    >
-                      <FiEye size={18} />
-                    </button>
-                    <button
-                      className="text-green-500 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300"
-                      onClick={() => { setSelectedApplication(a); setOpenUpdate(true); }}
-                    >
-                      <FiEdit size={18} />
-                    </button>
-                    <button
-                      className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
-                      onClick={() => { setSelectedApplication(a); setOpenDelete(true); }}
-                    >
-                      <FiTrash2 size={18} />
-                    </button>
-                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="text-center p-5 text-gray-500 border-t border-gray-300">
+                <td colSpan="5" className="text-center p-5 text-gray-500 border-t border-gray-300">
                   No applications found.
                 </td>
               </tr>
@@ -218,11 +179,7 @@ const ApplicationTable = () => {
 
 
 
-      {/* Modals */}
-      {openAdd && <AddModel onClose={() => setOpenAdd(false)} onAdd={handleAddApplication} />}
-      {openView && <ViewModel application={selectedApplication} onClose={() => setOpenView(false)} />}
-      {openUpdate && <UpdateModel application={selectedApplication} onClose={() => setOpenUpdate(false)} onUpdate={handleUpdateApplication} />}
-      {openDelete && <DeleteModel application={selectedApplication} onClose={() => setOpenDelete(false)} onDelete={handleDeleteApplication} />}
+      {/* No modals as per requirements */}
     </div>
   );
 };

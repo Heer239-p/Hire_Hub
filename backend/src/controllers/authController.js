@@ -111,6 +111,38 @@ export const loginUser = async (req, res) => {
   }
 };
 
+// ==========================
+// LOGIN ADMIN
+// ==========================
+export const loginAdmin = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    // Check if user exists, password is correct, and user has admin role
+    if (user && (await bcrypt.compare(password, user.password)) && user.role === "admin") {
+      res.json({
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        name: `${user.firstName} ${user.lastName}`,
+        email: user.email,
+        role: user.role,
+        profileImage: user.profileImage,
+        token: generateToken(user._id),
+      });
+    } else if (user && user.role !== "admin") {
+      res.status(403).json({ message: "Access denied. Admin privileges required." });
+    } else {
+      res.status(401).json({ message: "Invalid email or password" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Login failed", error });
+  }
+};
+
 
 // ==========================
 // LOGOUT USER

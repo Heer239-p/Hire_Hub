@@ -7,7 +7,7 @@ const jobSchema = new mongoose.Schema(
     company: { type: String, default: "Unknown Company" },
     location: { type: String, default: "Remote" },
 
-    // 💰 Salary Section
+    //  Salary Section
     salaryType: {
       type: String,
       enum: ["Fixed", "Range"],
@@ -44,7 +44,7 @@ const jobSchema = new mongoose.Schema(
       },
     },
 
-    // 👤 Employer Reference
+    //  Employer Reference
     employer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -58,13 +58,13 @@ const jobSchema = new mongoose.Schema(
       default: "Full-Time",
     },
 
-    // 🧠 Required Skills
+    //  Required Skills
     skills: [{ type: String }],
 
-    // 🗓️ Application Deadline
+    //  Application Deadline
     deadline: { type: Date },
 
-    // 👥 Applicants List
+    //  Applicants List
     applicants: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -72,7 +72,7 @@ const jobSchema = new mongoose.Schema(
       },
     ],
 
-    // 🏷️ Job Category
+    //  Job Category
     category: {
       type: String,
       enum: [
@@ -89,20 +89,20 @@ const jobSchema = new mongoose.Schema(
       default: "Other",
     },
 
-    // 📂 Job Status
+    //  Job Status
     status: {
       type: String,
       enum: ["Active", "Closed", "Pending"],
       default: "Pending",
     },
 
-    // 💳 Payment Reference
+    //  Payment Reference
     payment: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Payment",
     },
 
-    // 📎 Optional Attachment
+    //  Optional Attachment
     attachment: {
       type: String,
       default: null,

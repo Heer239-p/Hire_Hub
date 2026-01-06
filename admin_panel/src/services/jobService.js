@@ -1,152 +1,174 @@
-// /services/jobService.js
+import axios from "axios";
 
-// Initialize default jobs in localStorage if not present
-const initializeJobs = () => {
-  const stored = localStorage.getItem("jobs");
-  if (!stored) {
-    const defaultJobs = [
-      {
-        id: 1,
-        title: "Frontend Developer",
-        company: "TechCorp",  
-        category: "IT",
-        location: "New York",
-        type: "Full-Time",
-        postedDate: "2025-10-01",
-        expiryDate: "2025-11-01",
-        applications: 25,
-        status: "Active",
-      },
-      {
-        id: 2,
-        title: "UI/UX Designer",
-        company: "DesignPro",
-        category: "Design",
-        location: "London",
-        type: "Part-Time",
-        postedDate: "2025-09-28",
-        expiryDate: "2025-10-28",
-        applications: 15,
-        status: "Active",
-      },
-      {
-        id: 3,
-        title: "Backend Engineer",
-        company: "CodeHub",
-        category: "Development",
-        location: "Toronto",
-        type: "Remote",
-        postedDate: "2025-09-15",
-        expiryDate: "2025-10-15",
-        applications: 40,
-        status: "Closed",
-      },
-      {
-        id: 4,
-        title: "HR Manager",
-        company: "BizWorld",
-        category: "Human Resources",
-        location: "Berlin",
-        type: "Full-Time",
-        postedDate: "2025-09-10",
-        expiryDate: "2025-10-10",
-        applications: 10,
-        status: "Active",
-      },
-    ];
-    localStorage.setItem("jobs", JSON.stringify(defaultJobs));
+const API_BASE_URL = "http://localhost:5000/api";
+
+// Get admin token from localStorage
+const getAuthToken = () => {
+  return localStorage.getItem("adminToken");
+};
+
+// Create axios instance with default config
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+});
+
+// Add auth interceptor
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = getAuthToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-};
+);
 
-export const fetchJobs = async (page = 1, searchTerm = "") => {
-  // Initialize jobs if not present
-  initializeJobs();
-  
-  // Get jobs from localStorage
-  const allJobs = JSON.parse(localStorage.getItem("jobs") || "[]");
-
-  // Filter by search term
-  const filtered = allJobs.filter((job) =>
-    job.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // Pagination setup
-  const jobsPerPage = 2;
-  const totalPages = Math.ceil(filtered.length / jobsPerPage);
-  const start = (page - 1) * jobsPerPage;
-  const end = start + jobsPerPage;
-  const jobs = filtered.slice(start, end);
-
-  // Simulate API delay
-  await new Promise((res) => setTimeout(res, 500));
-
-  return { jobs, totalPages, total: filtered.length };
-};
-
-// Add a new job
-export const addJob = async (jobData) => {
-  initializeJobs();
-  const allJobs = JSON.parse(localStorage.getItem("jobs") || "[]");
-  
-  // Generate new ID
-  const newId = allJobs.length > 0 ? Math.max(...allJobs.map(j => j.id)) + 1 : 1;
-  
-  // Create new job object
-  const newJob = {
-    id: newId,
-    title: jobData.title,
-    company: jobData.company,
-    category: jobData.category,
-    location: jobData.location,
-    type: jobData.type,
-    postedDate: jobData.postedDate || new Date().toISOString().split('T')[0],
-    expiryDate: jobData.expiryDate,
-    applications: jobData.applications || 0,
-    status: jobData.status || "Active",
-  };
-  
-  // Add to array and save
-  allJobs.push(newJob);
-  localStorage.setItem("jobs", JSON.stringify(allJobs));
-  
-  console.log("✅ Job added to localStorage:", newJob);
-  console.log("✅ Total jobs in localStorage:", allJobs.length);
-  
-  // Dispatch custom event to notify other components
-  window.dispatchEvent(new Event("localStorageUpdated"));
-  
-  // Simulate API delay
-  await new Promise((res) => setTimeout(res, 300));
-  
-  return newJob;
-};
-
-// Update a job
-export const updateJob = async (jobId, jobData) => {
-  const allJobs = JSON.parse(localStorage.getItem("jobs") || "[]");
-  const index = allJobs.findIndex(j => j.id === jobId);
-  
-  if (index !== -1) {
-    allJobs[index] = { ...allJobs[index], ...jobData };
-    localStorage.setItem("jobs", JSON.stringify(allJobs));
+/**
+ * Fetch all jobs with employer details
+ * @param {number} page - Page number
+ * @param {string} searchTerm - Search term to filter jobs
+ * @param {number} limit - Number of jobs per page
+ * @returns {Promise<Object>} Object containing jobs and pagination info
+ */
+export const fetchJobs = async (page = 1, searchTerm = "", limit = 10) => {
+  try {
+    const response = await apiClient.post("/admin/jobs", {
+      page,
+      limit,
+      search: searchTerm
+    });
     
-    // Dispatch custom event to notify other components
-    window.dispatchEvent(new Event("localStorageUpdated"));
+    if (response.data.status === "success") {
+      // Transform the data to match the existing format
+      const jobs = response.data.data.map(job => ({
+        id: job._id,
+        title: job.title,
+        description: job.description,
+        company: job.company,
+        category: job.category,
+        location: job.location,
+        jobType: job.jobType,
+        salary: job.salaryType === "Fixed" 
+          ? `₹${job.fixedSalary?.toLocaleString()}` 
+          : job.salaryType === "Range" 
+          ? `₹${job.salaryRange?.from?.toLocaleString()} - ₹${job.salaryRange?.to?.toLocaleString()}`
+          : "Not specified",
+        applicants: job.applicants || 0,
+        status: job.status,
+        employer: job.employer ? `${job.employer.firstName} ${job.employer.lastName}` : "Unknown Employer",
+        createdAt: new Date(job.createdAt).toLocaleDateString(),
+        attachment: job.attachment || null // Add attachment field
+      }));
+      
+      return {
+        jobs,
+        total: jobs.length,
+        currentPage: page,
+        totalPages: Math.ceil(jobs.length / limit)
+      };
+    } else {
+      throw new Error(response.data.message || "Failed to fetch jobs");
+    }
+  } catch (error) {
+    console.error("Error fetching jobs:", error);
+    throw error;
   }
-  
-  await new Promise((res) => setTimeout(res, 300));
-  return allJobs[index];
 };
 
-// Delete a job
+/**
+ * Add a new job
+ * @param {Object} jobData - Job data to create
+ * @returns {Promise<Object>} Created job object
+ */
+export const addJob = async (jobData) => {
+  try {
+    const response = await apiClient.post("/jobs", jobData);
+    if (response.data.status === "success") {
+      // Transform the data to match the existing format
+      const job = response.data.data;
+      return {
+        id: job._id,
+        title: job.title,
+        description: job.description,
+        company: job.company,
+        category: job.category,
+        location: job.location,
+        jobType: job.jobType,
+        salary: job.salaryType === "Fixed" 
+          ? `₹${job.fixedSalary?.toLocaleString()}` 
+          : job.salaryType === "Range" 
+          ? `₹${job.salaryRange?.from?.toLocaleString()} - ₹${job.salaryRange?.to?.toLocaleString()}`
+          : "Not specified",
+        applicants: job.applicants || 0,
+        status: job.status,
+        employer: job.employer ? `${job.employer.firstName} ${job.employer.lastName}` : "Unknown Employer",
+        createdAt: new Date(job.createdAt).toLocaleDateString(),
+        attachment: job.attachment || null // Add attachment field
+      };
+    } else {
+      throw new Error(response.data.message || "Failed to create job");
+    }
+  } catch (error) {
+    console.error("Error creating job:", error);
+    throw error;
+  }
+};
+
+/**
+ * Update an existing job
+ * @param {string} jobId - ID of the job to update
+ * @param {Object} jobData - Updated job data
+ * @returns {Promise<Object>} Updated job object
+ */
+export const updateJob = async (jobId, jobData) => {
+  try {
+    const response = await apiClient.post(`/admin/jobs/update/${jobId}`, jobData);
+    if (response.data.status === "success") {
+      // Transform the data to match the existing format
+      const job = response.data.data;
+      return {
+        id: job._id,
+        title: job.title,
+        description: job.description,
+        company: job.company,
+        category: job.category,
+        location: job.location,
+        jobType: job.jobType,
+        salary: job.salaryType === "Fixed" 
+          ? `₹${job.fixedSalary?.toLocaleString()}` 
+          : job.salaryType === "Range" 
+          ? `₹${job.salaryRange?.from?.toLocaleString()} - ₹${job.salaryRange?.to?.toLocaleString()}`
+          : "Not specified",
+        applicants: job.applicants || 0,
+        status: job.status,
+        employer: job.employer ? `${job.employer.firstName} ${job.employer.lastName}` : "Unknown Employer",
+        createdAt: new Date(job.createdAt).toLocaleDateString(),
+        attachment: job.attachment || null // Add attachment field
+      };
+    } else {
+      throw new Error(response.data.message || "Failed to update job");
+    }
+  } catch (error) {
+    console.error("Error updating job:", error);
+    throw error;
+  }
+};
+
+/**
+ * Delete a job
+ * @param {string} jobId - ID of the job to delete
+ * @returns {Promise<boolean>} True if deletion was successful
+ */
 export const deleteJob = async (jobId) => {
-  const allJobs = JSON.parse(localStorage.getItem("jobs") || "[]");
-  const filtered = allJobs.filter(j => j.id !== jobId);
-  localStorage.setItem("jobs", JSON.stringify(filtered));
-  
-  // Dispatch custom event to notify other components
-  window.dispatchEvent(new Event("localStorageUpdated"));
-  
-  await new Promise((res) => setTimeout(res, 300));
-  return true;
+  try {
+    // Use the admin endpoint for job deletion
+    const response = await apiClient.post(`/admin/jobs/delete/${jobId}`);
+    return response.data.status === "success";
+  } catch (error) {
+    console.error("Error deleting job:", error);
+    throw error;
+  }
 };

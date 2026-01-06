@@ -4,7 +4,7 @@ const DeleteModel = ({ company, onClose, onDelete }) => {
   if (!company) return null;
 
   const handleDelete = () => {
-    onDelete(company.id);
+    onDelete(company._id);
     onClose();
   };
 
@@ -13,7 +13,7 @@ const DeleteModel = ({ company, onClose, onDelete }) => {
       <div className="bg-white rounded-xl shadow-lg p-6 w-100 text-center">
         <h2 className="text-xl font-semibold mb-4 text-gray-800">Delete Company</h2>
         <p className="text-gray-600 mb-6">
-          Are you sure you want to delete <strong>{company.name}</strong>?
+          Are you sure you want to delete <strong>{company.companyName || company.name}</strong>?
         </p>
         <div className="flex justify-center space-x-3">
           <button

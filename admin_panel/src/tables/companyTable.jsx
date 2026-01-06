@@ -1,130 +1,115 @@
 import React, { useState, useEffect } from "react";
 import { Pagination, Select, MenuItem } from "@mui/material";
-import { FiEye, FiEdit, FiTrash2, FiPlus } from "react-icons/fi";
+import { FiEye, FiPlus } from "react-icons/fi";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { CSVLink } from "react-csv";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 import AddModel from "../models/company/addModel";
 import ViewModel from "../models/company/viewModel";
-import UpdateModel from "../models/company/updateModel";
-import DeleteModel from "../models/company/deleteModel";
+// Import the company service
+import { fetchCompanies as fetchCompaniesService } from "../services/companyService";
+// Removed UpdateModel and DeleteModel since we're removing edit/delete functionality
 
 const CompaniesTable = () => {
-  // Load from localStorage if exists, or default sample data
-  const storedCompanies = JSON.parse(localStorage.getItem("companies")) || [
-    {
-      id: 1,
-      name: "Google",
-      industry: "Technology",
-      website: "https://google.com",
-      description: "Leading search engine and technology company",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png",
-    },
-    {
-      id: 2,
-      name: "Microsoft",
-      industry: "Technology",
-      website: "https://microsoft.com",
-      description: "Global technology company and software provider",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/768px-Microsoft_logo.svg.png",
-    },
-    {
-      id: 3,
-      name: "Apple",
-      industry: "Technology",
-      website: "https://apple.com",
-      description: "Consumer electronics and software company",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/488px-Apple_logo_black.svg.png",
-    },
-    {
-      id: 4,
-      name: "Amazon",
-      industry: "E-commerce",
-      website: "https://amazon.com",
-      description: "E-commerce and cloud computing company",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/603px-Amazon_logo.svg.png",
-    },
-    {
-      id: 5,
-      name: "Meta",
-      industry: "Social Media",
-      website: "https://meta.com",
-      description: "Social media and technology conglomerate",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Meta_Platforms_Inc._logo.svg/768px-Meta_Platforms_Inc._logo.svg.png",
-    },
-  ];
-
-  const [companies, setCompanies] = useState(storedCompanies);
+  const [companies, setCompanies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalCompanies, setTotalCompanies] = useState(0);
   const [selectedCompany, setSelectedCompany] = useState(null);
+  const navigate = useNavigate();
 
   const [openAdd, setOpenAdd] = useState(false);
   const [openView, setOpenView] = useState(false);
-  const [openUpdate, setOpenUpdate] = useState(false);
-  const [openDelete, setOpenDelete] = useState(false);
+  // Removed openUpdate and openDelete since we're removing edit/delete functionality
 
-  // Persist changes in localStorage
+  // Fetch companies from backend API using the service
+  const fetchCompanies = async () => {
+    try {
+      setLoading(true);
+      const data = await fetchCompaniesService(page, searchTerm, rowsPerPage);
+      setCompanies(data.companies);
+      setTotalPages(data.totalPages);
+      setTotalCompanies(data.total);
+    } catch (err) {
+      setError("Error fetching companies: " + err.message);
+      toast.error("Error fetching companies: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    localStorage.setItem("companies", JSON.stringify(companies));
-  }, [companies]);
-
-  // Filtered and paginated companies
-  const filteredCompanies = companies.filter(
-    (c) =>
-      c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.industry.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.website.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const totalPages = Math.ceil(filteredCompanies.length / rowsPerPage);
-  const paginatedCompanies = filteredCompanies.slice(
-    (page - 1) * rowsPerPage,
-    page * rowsPerPage
-  );
+    fetchCompanies();
+  }, [page, searchTerm, rowsPerPage]);
 
   // Export handlers
   const exportPDF = () => {
     const doc = new jsPDF();
     autoTable(doc, {
-      head: [["Name", "Industry", "Website", "Description"]],
-      body: filteredCompanies.map((c) => [
-        c.name,
-        c.industry,
-        c.website,
-        c.description,
+      head: [["Company Name", "Industry", "Website", "Description"]],
+      body: companies.map((c) => [
+        c.companyName || "N/A",
+        c.industry || "N/A",
+        c.companyWebsite || "N/A",
+        c.companyDescription || "N/A",
       ]),
     });
     doc.save("companies.pdf");
   };
 
-  const csvData = filteredCompanies.map((c) => ({
-    Name: c.name,
-    Industry: c.industry,
-    Website: c.website,
-    Description: c.description,
+  const csvData = companies.map((c) => ({
+    "Company Name": c.companyName || "N/A",
+    "Industry": c.industry || "N/A",
+    "Website": c.companyWebsite || "N/A",
+    "Description": c.companyDescription || "N/A",
   }));
 
-  // CRUD Handlers
+  // CRUD Handlers (only keeping the ones we need)
   const handleAddCompany = (newCompany) => {
-    setCompanies([...companies, { id: Date.now(), ...newCompany }]);
+    // This would typically make an API call to add the company
+    // For now, we'll just show a toast
+    toast.success("Company added successfully!");
+    // Refresh the companies list
+    fetchCompanies();
   };
 
-  const handleUpdateCompany = (updatedCompany) => {
-    setCompanies(
-      companies.map((c) => (c.id === updatedCompany.id ? updatedCompany : c))
+  if (loading) {
+    return (
+      <div className="p-6 bg-gray-50 dark:bg-gray-950 min-h-screen transition-colors duration-300">
+        <div>Loading companies...</div>
+      </div>
     );
-  };
+  }
 
-  const handleDeleteCompany = (id) => {
-    setCompanies(companies.filter((c) => c.id !== id));
-  };
+  if (error) {
+    return (
+      <div className="p-6 bg-gray-50 dark:bg-gray-950 min-h-screen transition-colors duration-300">
+        <div className="text-red-500">Error: {error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-gray-50 dark:bg-gray-950 min-h-screen transition-colors duration-300">
+      <ToastContainer 
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <h1 className="text-3xl font-semibold mb-6 text-gray-800 dark:text-gray-100">
         Manage Companies
       </h1>
@@ -172,7 +157,7 @@ const CompaniesTable = () => {
         <table className="w-full bg-white dark:bg-gray-800 text-sm border-t border-gray-300 dark:border-gray-700 border-collapse">
           <thead className="bg-blue-500 dark:bg-blue-700 text-white uppercase text-sm">
             <tr>
-              {["Logo", "Name", "Industry", "Website", "Description", "Actions"].map((head) => (
+              {["Company Name", "Industry", "Website", "Description", "Actions"].map((head) => (
                 <th key={head} className="p-3 text-left font-semibold">
                   {head}
                 </th>
@@ -180,29 +165,26 @@ const CompaniesTable = () => {
             </tr>
           </thead>
           <tbody>
-            {paginatedCompanies.length ? (
-              paginatedCompanies.map((c) => (
-                <tr key={c.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+            {companies.length ? (
+              companies.map((c) => (
+                <tr key={c._id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                  <td className="p-3 text-gray-900 dark:text-gray-100 font-semibold">{c.companyName || "N/A"}</td>
+                  <td className="p-3 text-gray-900 dark:text-gray-100">{c.industry || "N/A"}</td>
                   <td className="p-3">
-                    <img
-                      src={c.logo}
-                      alt={c.name}
-                      className="w-12 h-12 object-contain rounded"
-                    />
+                    {c.companyWebsite ? (
+                      <a
+                        href={c.companyWebsite}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-blue-500 dark:text-blue-400 hover:underline"
+                      >
+                        {c.companyWebsite}
+                      </a>
+                    ) : (
+                      "N/A"
+                    )}
                   </td>
-                  <td className="p-3 text-gray-900 dark:text-gray-100 font-semibold">{c.name}</td>
-                  <td className="p-3 text-gray-900 dark:text-gray-100">{c.industry}</td>
-                  <td className="p-3">
-                    <a
-                      href={c.website}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-blue-500 dark:text-blue-400 hover:underline"
-                    >
-                      {c.website}
-                    </a>
-                  </td>
-                  <td className="p-3 text-gray-900 dark:text-gray-100">{c.description}</td>
+                  <td className="p-3 text-gray-900 dark:text-gray-100">{c.companyDescription || "N/A"}</td>
                   <td className="p-3 flex items-center space-x-3">
                     <button
                       className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
@@ -213,31 +195,14 @@ const CompaniesTable = () => {
                     >
                       <FiEye size={18} />
                     </button>
-                    <button
-                      className="text-green-500 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300"
-                      onClick={() => {
-                        setSelectedCompany(c);
-                        setOpenUpdate(true);
-                      }}
-                    >
-                      <FiEdit size={18} />
-                    </button>
-                    <button
-                      className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
-                      onClick={() => {
-                        setSelectedCompany(c);
-                        setOpenDelete(true);
-                      }}
-                    >
-                      <FiTrash2 size={18} />
-                    </button>
+                    {/* Removed Edit and Delete buttons as per requirements */}
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
                 <td
-                  colSpan="6"
+                  colSpan="5"
                   className="text-center p-5 text-gray-500 dark:text-gray-400 border-t border-gray-300 dark:border-gray-700"
                 >
                   No companies found.
@@ -270,7 +235,7 @@ const CompaniesTable = () => {
         </div>
 
         <div className="text-gray-700 dark:text-gray-300 text-sm font-medium">
-          Page {page} / {totalPages}
+          Page {page} / {totalPages} 
         </div>
 
         <Pagination
@@ -291,20 +256,7 @@ const CompaniesTable = () => {
       {openView && selectedCompany && (
         <ViewModel company={selectedCompany} onClose={() => setOpenView(false)} />
       )}
-      {openUpdate && selectedCompany && (
-        <UpdateModel
-          company={selectedCompany}
-          onClose={() => setOpenUpdate(false)}
-          onUpdate={handleUpdateCompany}
-        />
-      )}
-      {openDelete && selectedCompany && (
-        <DeleteModel
-          company={selectedCompany}
-          onClose={() => setOpenDelete(false)}
-          onDelete={handleDeleteCompany}
-        />
-      )}
+      {/* Removed UpdateModel and DeleteModel modals as per requirements */}
     </div>
   );
 };

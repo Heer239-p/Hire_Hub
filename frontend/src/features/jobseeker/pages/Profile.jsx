@@ -20,9 +20,6 @@ const companyFieldConfig = [
   { name: "companyWebsite", label: "Company Website" },
   { name: "companySize", label: "Team Size" },
   { name: "foundedYear", label: "Founded Year", type: "number" },
-  { name: "headquarters", label: "Headquarters" },
-  { name: "hiringFocus", label: "Hiring For" },
-  { name: "culture", label: "Work Culture Highlights" },
   { name: "companyDescription", label: "Company Description", textarea: true },
 ];
 

@@ -1,31 +1,53 @@
 // /services/companyService.js
 export const fetchCompanies = async (page = 1, searchTerm = "", rowsPerPage = 5) => {
-  // Mock data (you can replace this with API call later)
-  const allCompanies = [
-    { id: 1, name: "ABC Corp", location: "New York", industry: "Tech", status: "Active" },
-    { id: 2, name: "XYZ Ltd", location: "California", industry: "Finance", status: "Active" },
-    { id: 3, name: "Acme Inc", location: "Texas", industry: "Manufacturing", status: "Inactive" },
-    { id: 4, name: "Globex", location: "Florida", industry: "Retail", status: "Active" },
-    { id: 5, name: "Initech", location: "New Jersey", industry: "IT", status: "Active" },
-    { id: 6, name: "Umbrella", location: "Nevada", industry: "Pharma", status: "Inactive" },
-  ];
+  try {
+    // Get admin token from localStorage
+    const token = localStorage.getItem("adminToken");
+    
+    if (!token) {
+      throw new Error("No admin token found. Please log in again.");
+    }
 
-  // 🔍 Filter companies by search term
-  const filtered = allCompanies.filter(
-    (c) =>
-      c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.industry.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    // Make API call to fetch companies
+    const response = await fetch("http://localhost:5000/api/admin/companies", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
 
-  // 📄 Pagination setup
-  const totalPages = Math.ceil(filtered.length / rowsPerPage);
-  const start = (page - 1) * rowsPerPage;
-  const end = start + rowsPerPage;
-  const companies = filtered.slice(start, end);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-  // Simulate async API delay
-  await new Promise((res) => setTimeout(res, 400));
+    const data = await response.json();
+    
+    if (data.success) {
+      // Filter companies by search term if provided
+      let filteredCompanies = data.companies;
+      if (searchTerm) {
+        filteredCompanies = data.companies.filter(
+          (c) =>
+            (c.companyName && c.companyName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (c.industry && c.industry.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (c.companyWebsite && c.companyWebsite.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (c.companyDescription && c.companyDescription.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+      }
 
-  return { companies, totalPages, total: filtered.length };
+      // Pagination setup
+      const totalPages = Math.ceil(filteredCompanies.length / rowsPerPage);
+      const start = (page - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      const companies = filteredCompanies.slice(start, end);
+
+      return { companies, totalPages, total: filteredCompanies.length };
+    } else {
+      throw new Error(data.message || "Failed to fetch companies");
+    }
+  } catch (error) {
+    console.error("Error fetching companies:", error);
+    throw error;
+  }
 };

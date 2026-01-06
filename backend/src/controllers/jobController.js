@@ -243,17 +243,34 @@ export const deleteJob = async (req, res) => {
 // ==========================
 export const getMyJobs = async (req, res) => {
   try {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const page = Number(req.body.page) || 1;
+    const limit = Number(req.body.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const jobs = await Job.find({ employer: req.user._id })
+    // Build filter object
+    const filter = { employer: req.user._id };
+    
+    // Add filters from request body
+    if (req.body.title) {
+      filter.title = { $regex: req.body.title, $options: 'i' }; // Case-insensitive search
+    }
+    if (req.body.category) {
+      filter.category = req.body.category;
+    }
+    if (req.body.jobType) {
+      filter.jobType = req.body.jobType;
+    }
+    if (req.body.status) {
+      filter.status = req.body.status;
+    }
+
+    const jobs = await Job.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .populate("employer", "firstName lastName email role");
 
-    const totalJobs = await Job.countDocuments({ employer: req.user._id });
+    const totalJobs = await Job.countDocuments(filter);
 
     return successResponse(res, 200, "Your jobs fetched successfully ✅", {
       jobs,

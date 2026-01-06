@@ -15,6 +15,17 @@ export const getOnlyUsers = async (token) => {
   return data.data; // return only the array of users
 };
 
+export const getUserProfile = async (token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const { data } = await api.get("/user/profile", config);
+  return data.result;
+};
+
 export const updateUserProfile = async (formData, token) => {
   const config = {
     headers: {
@@ -23,6 +34,6 @@ export const updateUserProfile = async (formData, token) => {
     },
   };
 
-  const { data } = await api.post("/user/profile", formData, config);
+  const { data } = await api.put("/user/profile", formData, config);
   return data;
 };

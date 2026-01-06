@@ -3,10 +3,18 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getMyApplications, withdrawApplication } from "../../api/applicationApi";
 import ApplicationCard from "../../components/ApplicationCard";
+import useApplicationUpdates from "../../hooks/useApplicationUpdates";
 
 const UserApplications = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Use the custom hook for application updates
+  const { lastUpdated, startPolling, stopPolling } = useApplicationUpdates(
+    applications,
+    setApplications,
+    30000 // Poll every 30 seconds
+  );
 
   const fetchApplications = async () => {
     try {
@@ -32,6 +40,14 @@ const UserApplications = () => {
 
   useEffect(() => {
     fetchApplications();
+    
+    // Start polling for updates
+    startPolling();
+    
+    // Clean up polling on component unmount
+    return () => {
+      stopPolling();
+    };
   }, []);
 
   if (loading) return <p className="text-center mt-20">Loading applications...</p>;
@@ -40,14 +56,25 @@ const UserApplications = () => {
     <section className="py-5 bg-gray-50 min-h-screen">
       <ToastContainer />
       <div className="container mx-auto px-3 md:px-0">
-        <h2 className="text-4xl font-bold mb-6 text-gray-800 text-center">
-          My Job Applications
-        </h2>
+         <div className="text-center mb-10">
+          <h2 className="text-4xl font-bold text-[#0b132b] mb-3">My Applications</h2>
+          <p className="text-gray-600 text-lg">
+            
+          </p>
+        </div>
 
         {applications.length === 0 ? (
-          <p className="text-center text-gray-500">
-            You have not applied to any jobs yet.
-          </p>
+          <div className="text-center py-20">
+            <p className="text-gray-500 text-lg">
+              You have not applied to any jobs yet.
+            </p>
+            <a 
+              href="/browse-jobs" 
+              className="mt-4 inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            >
+              Browse Jobs
+            </a>
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {applications.map((app) => (
