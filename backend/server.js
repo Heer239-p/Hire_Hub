@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./src/config/db.js";
-import routes from "./src/routes/index.js"; // ✅ Import consolidated routes
+import routes from "./src/routes/index.js"; //  Import consolidated routes
 
 dotenv.config();
 
@@ -19,11 +19,11 @@ app.use("/uploads", express.static("src/uploads"));
 // Use consolidated routes
 app.use("/api", routes);
 
-// ✅ Default test route
+//  Default test route
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "✅ API is running successfully!",
+    message: " API is running successfully!",
   });
 });
 
